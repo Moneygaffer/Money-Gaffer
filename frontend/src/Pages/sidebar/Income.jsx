@@ -17,8 +17,10 @@ function FormTable({ addTransaction }) {
   const [bankid,setBankId]=useState("")
   const [page, setPage] = useState(0);
   const rowsPerPage = 8; 
-  const session=JSON.parse(sessionStorage.getItem("user"));  
+  const session = JSON.parse(sessionStorage.getItem("user"))
 
+  const userIdObj = session.find((item) => item.Name === "_id");
+  const userId = userIdObj ? userIdObj.Value : null;
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -27,12 +29,13 @@ const handleSubmit = async (e) => {
   try {
     const { data: bankData } = await axios.post(apiUrl, {
       crudtype: 2,
-      userId: session._id,
+      userId: userId,
+      bankid:bankid,
       recordId: null,
       collectionname: "bankaccounts",
     });
-    if(session._id){
-      console.log(session._id)
+    if(userId){
+      console.log(userId)
 
     }
     console.log(bankData);
@@ -44,7 +47,7 @@ const handleSubmit = async (e) => {
     
     if (Array.isArray(bankAccounts)) {
       for (const account of bankAccounts) {
-        if (account.userId === session._id) {
+      
         if (Array.isArray(account.details)) {
           foundAccount = account.details.find((detail) => detail.bankName === bankName);
           if (foundAccount) {
@@ -53,7 +56,7 @@ const handleSubmit = async (e) => {
             break;
           }
         }
-      }
+      
       }
     }
     else {
@@ -63,7 +66,7 @@ const handleSubmit = async (e) => {
 
     const requestData = await axios.post(apiUrl, {
       crudtype: 1,
-      userId: session._id,
+      userId: userId,
       recordid: recordId,
       collectionname: "income",
       data: {

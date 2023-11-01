@@ -22,9 +22,12 @@ function AccountInfo(){
         e.preventDefault();
         const recordId = uuid();
         try {
+            const userIdObj = session.find((item) => item.Name === "_id");
+            const userId = userIdObj ? userIdObj.Value : null;
+           // console.log(userId)
           const response = await axios.post(apiUrl, {
             crudtype: 1,
-            userId: session._id,
+            userId: userId,
             recordid: recordId,
             collectionname: "bankaccounts",
             data: {

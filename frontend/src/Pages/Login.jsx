@@ -69,6 +69,7 @@ function Login() {
 
       if (loginResponse.data.status === "PASS") {
       const temp =   JSON.parse(loginResponse.data.data.replace(/ObjectId\("(\w+)"\)/g, '"$1"'));
+      console.log(temp)
         sessionStorage.setItem("user", JSON.stringify(temp[0]))
         navigate("/dashboard");
         
