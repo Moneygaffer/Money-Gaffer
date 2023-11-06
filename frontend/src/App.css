@@ -27,7 +27,7 @@ main {
   height: 100vh;
   align-items: start;
   width :300px;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 
 

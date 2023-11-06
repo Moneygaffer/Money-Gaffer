@@ -1,26 +1,29 @@
-/* incomecss.css */
 
-/* Page Container Styles */
 
 .page-container {
-  display:  flex;
+  display: flex;
   flex: 5;
-  /* background-color: red; */
   margin-left: 10px;
-  width : 80vw;
+  width: 80vw;
   margin-top: 10px;
+  justify-content: center;
+  animation: fadeIn 1s;
 }
 
-/* Main Container Styles */
 .container {
   display: flex;
-  width : 100%;
+  width: 100%;
   justify-content: space-between;
   align-items: flex-start;
   margin: 20px;
   background-color: #fff;
   border-radius: 5px;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.container:hover {
+  box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
 }
 
 /* Form Container Styles */
@@ -28,10 +31,33 @@
   width: 430px;
   padding: 20px;
   box-shadow: 5px 5px 10px rgb(53, 14, 228);
-
-  background-color: #f3f3f3;
   border-radius: 10px;
+  animation: fadein 1s;
+  background-color: #e6e6fa;
+  
 }
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slidein {
+  from {
+    transform: translateX(-250px);
+  }
+  to {
+    transform: translateX(0);
+  }
+
+}
+
 
 .form-container h2 {
   margin: 0;
@@ -39,28 +65,37 @@
   border-bottom: 2px solid #007bff;
   font-size: 24px;
 }
-
+tr:hover {
+  background-color: #f5f5f5;
+  transition: background-color 0.3s ease;
+}
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 3px;
   height: 12vh;
-
 }
 
 label {
   font-weight: bold;
   display: block;
-  margin-bottom: 5px;
+  margin-top: 3px;
 }
 
 select,
 input[type="number"],
 input[type="date"] {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
+  padding: 12px;
+  border: 2px solid #ddd;
   border-radius: 5px;
   font-size: 16px;
-  margin-top: 5px;
+  margin-top: 10px;
+  transition: border 0.3s ease;
+}
+
+select:focus,
+input[type="number"]:focus,
+input[type="date"]:focus {
+  border: 2px solid #007bff;
 }
 
 button[type="submit"] {
@@ -71,6 +106,7 @@ button[type="submit"] {
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+  transition: background-color 0.3s ease;
 }
 
 button[type="submit"]:hover {
@@ -99,14 +135,17 @@ table {
   margin-top: 10px;
   background-color: #fff;
   border-radius: 5px;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-table, th, td {
+table,
+th,
+td {
   border: 1px solid #ccc;
 }
 
-th, td {
+th,
+td {
   padding: 12px;
   text-align: left;
 }
@@ -125,6 +164,7 @@ th {
   cursor: pointer;
   font-size: 14px;
   margin-right: 5px;
+  transition: background-color 0.3s ease;
 }
 
 .delete {
@@ -135,7 +175,6 @@ th {
 .delete:hover {
   background-color: #0056b3;
 }
-.main{
+.main {
   background-color: #9fa8da;
 }
-

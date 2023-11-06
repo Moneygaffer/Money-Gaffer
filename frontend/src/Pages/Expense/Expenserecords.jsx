@@ -43,7 +43,7 @@ const Expenserecords = () => {
         <div className="form-container">
           <h2>Expense Records</h2>
           <form>
-            <div className="form-group">
+            <div className="form-group5">
               <label htmlFor="startDate">Start Date:</label>
               <input
                 type="date"
@@ -52,7 +52,7 @@ const Expenserecords = () => {
                 onChange={(e) => setStartDate(e.target.value)}
               />
             </div>
-            <div className="form-group">
+            <div className="form-group5">
               <label htmlFor="endDate">End Date:</label>
               <input
                 type="date"
@@ -61,7 +61,7 @@ const Expenserecords = () => {
                 onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
-            <div className="form-group">
+            <div className="form-group5">
               <label htmlFor="expenseTitle">Expense Title</label>
               <input
                 type="text"
@@ -71,7 +71,7 @@ const Expenserecords = () => {
                 onChange={(e) => setExpenseTitle(e.target.value)}
               />
             </div>
-            <div className="form-group">
+            <div className="form-group5">
               <button className="retrieve-button" onClick={handleRetrieveDetails}>
                 Retrieve Details
               </button>

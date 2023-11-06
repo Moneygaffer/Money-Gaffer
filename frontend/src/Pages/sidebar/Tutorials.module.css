@@ -1,0 +1,49 @@
+.horizontal_scroll_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+  overflow-x: auto;
+}
+
+.button_containertutorial {
+  display: flex;
+  margin-left: 400px;
+}
+
+.card_container_horizontal {
+  display: flex;
+  flex-direction: row; /* Ensure the flex direction is set to row */
+  justify-content: flex-start; /* Adjust the alignment as needed */
+  gap: 20px; /* Set the desired gap between the cards */
+  overflow-x: scroll; /* Enable horizontal scrolling */
+}
+
+.card_tutorial_horizontal {
+  flex: 0 0 80%;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  min-width: 300px;
+  max-width: 200px;
+}
+
+.tutorial_heading {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.card_tutorial {
+  margin: 20px 0;
+}
+
+.card_tutorial h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.card_tutorial hr {
+  border: 0.5px solid #ddd;
+  margin: 10px 0;
+}

@@ -13,7 +13,7 @@ function AccountInfo(){
     const [accountType, setAccountType] = useState("");
     const [swiftCode, setSwiftCode] = useState("");
     const [accountId,setAccountId]=useState("");
-    const [data,setData]=useState("");
+
 
     const session = JSON.parse(sessionStorage.getItem("user"))
 
@@ -24,7 +24,6 @@ function AccountInfo(){
         try {
             const userIdObj = session.find((item) => item.Name === "_id");
             const userId = userIdObj ? userIdObj.Value : null;
-           // console.log(userId)
           const response = await axios.post(apiUrl, {
             crudtype: 1,
             userId: userId,
@@ -32,8 +31,8 @@ function AccountInfo(){
             collectionname: "bankaccounts",
             data: {
                 accountId:accountId,
-                bankName: bankName,
-                address: address,
+                bankName: bankName.toLowerCase(),
+                address: address.toLowerCase(),
                 ifsccode: ifscCode,
                 micrCode: micrCode,
                 accountType: accountType,
@@ -141,7 +140,7 @@ function AccountInfo(){
                         </div>
                     </div>
                     <div className="form-group2">
-              <button type="submit">Save</button>
+              <button className=" btn-1"type="submit">Save</button>
             </div>
             </form>
                 </div>

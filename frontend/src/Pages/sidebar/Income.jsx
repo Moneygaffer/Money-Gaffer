@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import "./incomecss.css";
 import axios from "axios";
 import { TablePagination } from "@mui/material";
@@ -13,8 +13,9 @@ function FormTable({ addTransaction }) {
   const [bankName, setBankName] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
-  const [data, setData] = useState([]);
-  const [bankid,setBankId]=useState("")
+  const [data] = useState([]);
+  const [bankid,setBankId]=useState("");
+  const [address,setAddress]=useState("");
   const [page, setPage] = useState(0);
   const rowsPerPage = 8; 
   const session = JSON.parse(sessionStorage.getItem("user"))
@@ -31,7 +32,7 @@ const handleSubmit = async (e) => {
       crudtype: 2,
       userId: userId,
       bankid:bankid,
-      recordId: null,
+      recordid: null,
       collectionname: "bankaccounts",
     });
     if(userId){
@@ -44,12 +45,12 @@ const handleSubmit = async (e) => {
     console.log("Bank Name:", bankName);
     console.log("Length of Bank Accounts:", bankAccounts.length);
 
-    
+   const  bankNameLower=bankName.toLowerCase();
+    const addressLower=address.toLowerCase();
     if (Array.isArray(bankAccounts)) {
       for (const account of bankAccounts) {
-      
         if (Array.isArray(account.details)) {
-          foundAccount = account.details.find((detail) => detail.bankName === bankName);
+          foundAccount = account.details.find((detail) =>( detail.bankName === bankNameLower && detail.address===addressLower) );
           if (foundAccount) {
             setBankId(foundAccount.recordId);
             console.log("Bank ID:", foundAccount.recordId);
@@ -78,6 +79,7 @@ const handleSubmit = async (e) => {
     });
 
     console.log(requestData);
+
     if (requestData.data.status === 'PASS') {
       console.log("Data saved Successfully");
     } else {
@@ -89,6 +91,7 @@ const handleSubmit = async (e) => {
 
   setincomeTitle("");
   setBankName("");
+  setAddress("");
   setAmount("");
   setDate("");
 };
@@ -119,13 +122,21 @@ const handleSubmit = async (e) => {
                 <option value="">Select</option>
                 <option value="SBI">SBI</option>
                 <option value="HDFC">HDFC</option>
-                <option value="Karnataka Bank">Karnataka Bank</option>
+                <option value="Karnataka Bank">Karnataka</option>
                 <option value="ICICI">ICICI</option>
                 <option value="AXIS">AXIS</option>
                 <option value="CANARA">CANARA</option>
                 <option value="HDFC">HDFC</option>
 
               </select>
+            </div>
+            <div className="form-group">
+              <label>Enter Your Branch</label>
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
             </div>
             <div className="form-group">
               <label>Amount</label>

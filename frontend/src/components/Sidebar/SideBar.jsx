@@ -3,26 +3,25 @@ import { FaBars, FaHome, FaLock, FaMoneyBill, FaUser } from "react-icons/fa";
 import { HiCreditCard } from "react-icons/hi";
 import { MdMessage } from "react-icons/md";
 import { BiAnalyse, BiSearch } from "react-icons/bi";
-import { FaElementor } from "react-icons/fa";
 import { BiCog } from "react-icons/bi";
 import {BsBookFill} from "react-icons/bs";
 import { BsFillBookmarksFill } from "react-icons/bs";
-import { AiFillHeart, AiTwotoneFileExclamation } from "react-icons/ai";
-import { BsCartCheck } from "react-icons/bs";
+import {  AiTwotoneFileExclamation } from "react-icons/ai";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import SidebarMenu from "./SidebarMenu";
 import PersonIcon from '@mui/icons-material/Person';
+import LiveTvIcon from '@mui/icons-material/LiveTv';
 const routes = [
   {
-    path: "/Home",
+    path: "/dashboard",
     name: "Dashboard",
     icon: <FaHome />,
   },
   {
     path:"/AccountInfo",
     name:"Create Account",
-    icon:<PersonIcon/>
+    icon:<PersonIcon fontSize="small"/>
   },
   {
     path: "/income",
@@ -35,25 +34,17 @@ const routes = [
     icon: <MdMessage />,
   },
   {
-    path: "/analytics",
-    name: "Savings",
+    path: "/investments",
+    name: "Investments",
     icon: <BiAnalyse />,
   },
   {
-    path: "/file-manager",
+    path: "/insurance",
     name: "Insurance",
     icon: <AiTwotoneFileExclamation />,
-    subRoutes: [
-      {
-        path: "/Insurance/info",
-        name: "Insurance funda",
-        icon: <FaUser />,
-      },
-     
-    ],
   },
   {
-    path: "/order",
+    path: "/loan",
     name: "Loans",
     icon: <BsFillBookmarksFill />,
   },
@@ -76,9 +67,9 @@ const routes = [
     ],
   },
   {
-    path: "/saved",
-    name: "My Locker",
-    icon: <FaElementor />,
+    path: "/tutorials",
+    name: "Tutorials",
+    icon: <LiveTvIcon fontSize="small" />,
   },
   {
     path: "/Records",

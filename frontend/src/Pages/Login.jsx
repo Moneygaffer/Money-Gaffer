@@ -7,56 +7,16 @@ import { motion } from "framer-motion";
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [userId,setUserId]=useState("");
+  const [userId]=useState("");
 
 
   const navigate = useNavigate();
-  const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb"; 
 
-// const fetchUserData = async () => {
-//   try {
-//     const response = await axios.post(apiUrl, {
-//       crudtype: 2,
-//       recordid: null,
-//       collectionname: "irwbusers",
-//     });
-
-//     console.log("Complete Response: ", response);
-
-//     let responseData = response.data;
-//     console.log("Response Data: ", responseData);
-//     if (typeof responseData === "object" && responseData.data) {
-//       if (typeof responseData.data === "string") {
-//         responseData.data = JSON.parse(responseData.data.replace(/ObjectId\("(\w+)"\)/g, '"$1"'));
-//       }
-//     } else {
-//       console.error("Data is not in the expected format");
-//       return;
-//     }
-
-//     console.log("Parsed Data: ", responseData.data);
-
-//     if (Array.isArray(responseData.data)) {
-//       const matchingUser = responseData.data.find(
-//         (user) => user.username === username
-//       );
-
-//       if (matchingUser) {
-//         const userId = matchingUser._id;
-//         console.log("User ID:", userId);
-//         setUserId(userId);
-//       } else {
-//         console.error("Invalid username or password");
-//       }
-//     } }catch (error) {
-//       console.error("API Error:", error);
-//     }
-//   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // await fetchUserData(); 
+
 
       const loginResponse = await axios.post(
         "https://omnireports.azurewebsites.net/api/Login",
