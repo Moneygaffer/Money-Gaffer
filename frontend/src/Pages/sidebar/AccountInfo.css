@@ -58,10 +58,17 @@
     padding-bottom: 10px;
     border-bottom: 2px solid #007bff;
     font-size: 24px;
+<<<<<<< HEAD
   }
   
   .form-group2 {
     margin-bottom: 20px;
+=======
+}
+
+.form-group2 {
+    margin-bottom: 21px;
+>>>>>>> 7e6f8bbcaf8c18237fb26cb0d06df305573732ba
     display: flex;
     align-items: center;
    /* // padding: 7px; */
