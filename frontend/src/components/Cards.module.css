@@ -1,0 +1,47 @@
+.card_container {
+    display: flex;
+    
+  }
+  
+  .cardss {
+    display: flex;
+    flex-direction: column;
+    width:310px;
+    padding: 10px;
+    border-radius: 15px;
+    margin-left:8px;
+    height: 120px;
+    margin-right:8px;
+    width:250px;
+    
+    box-shadow: 0 2px 4px rgba(48, 22, 22, 0.1);
+     text-align: center;
+    background: linear-gradient(135deg, rgb(0, 7, 61), #2196f3);
+  
+  }
+  
+  
+  .cardss p{
+    align-items: center;
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    .card:hover,
+    .card:active {
+      background: linear-gradient(to right, #6045e9 100%, #ffffff 100%);
+      transform: scale(1.01);
+    }
+    
+    .h2{
+      color: rgb(246, 247, 248);
+    }
+   .p{
+      color: aliceblue;
+    }

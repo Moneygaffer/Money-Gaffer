@@ -1,0 +1,17 @@
+.sidebarhome{
+    display:flex;
+    flex-direction:column;
+}
+.home_main{
+    display:flex;
+    flex-direction:row;
+    flex:1;
+}
+.chat_bot {
+    margin-left:10px;
+    margin-top: 30px;
+    float: right;
+    position: fixed;
+    bottom: 10px; /* Adjust the desired distance from the bottom */
+    right: 10px; /* Adjust the desired distance from the right */
+  }

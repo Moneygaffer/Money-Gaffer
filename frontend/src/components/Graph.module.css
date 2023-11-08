@@ -1,0 +1,9 @@
+/* Graph.css */
+
+#chart{
+    margin-top:50px;
+    display: flex;
+    align-self: center;
+    justify-self: center;
+    margin-left: 10px;
+}

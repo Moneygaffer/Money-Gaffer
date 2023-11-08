@@ -45,12 +45,15 @@ const handleSubmit = async (e) => {
     console.log("Bank Name:", bankName);
     console.log("Length of Bank Accounts:", bankAccounts.length);
 
-   const  bankNameLower=bankName.toLowerCase();
-    const addressLower=address.toLowerCase();
+   //const  bankNameLower=bankName.toLowerCase();
+    //const addressLower=address.toLowerCase();
+    //console.log(bankNameLower);
+    //console.log(addressLower)
     if (Array.isArray(bankAccounts)) {
       for (const account of bankAccounts) {
         if (Array.isArray(account.details)) {
-          foundAccount = account.details.find((detail) =>( detail.bankName === bankNameLower && detail.address===addressLower) );
+          foundAccount = account.details.find((detail) =>( detail.bankName ===bankName.toLowerCase()  && detail.address === address.toLowerCase()) );
+          console.log(foundAccount)
           if (foundAccount) {
             setBankId(foundAccount.recordId);
             console.log("Bank ID:", foundAccount.recordId);

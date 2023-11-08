@@ -17,6 +17,7 @@ import Investments from './Pages/sidebar/Investments/Investments';
 import Loan from './Pages/sidebar/Loan/Loan';
 import InsuranceForm from './Pages/sidebar/Insurance/InsuranceForm';
 import Tutorials from "./Pages/sidebar/Tutorials";
+import SideBarHome from "./components/SideBarHome";
 
 
 
@@ -60,9 +61,11 @@ function App() {
         {/* <Route path="/Dashboard" element={<Dashboard/>} /> */}
         <Route path="/Expenserecords" element={<Expenserecords/>} />
         <Route path="/Incomerecords" element={<Incomerecords/>} />
+        <Route path="/dashboard" element={<SideBarHome/>}/>
         
      
         </Routes>
+      
         
 
 

@@ -1,49 +1,66 @@
-.horizontal_scroll_container {
+.tutorial_container{
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  margin-top: 50px;
-  overflow-x: auto;
+  padding:50px;
+  height: 100vh;
+  width:100%;
+  margin: 0;
+  color:black; 
 }
-
-.button_containertutorial {
+.tutorial_button{
   display: flex;
-  margin-left: 400px;
+  flex-direction: row;
+  position:fixed;
+  margin-top:-600px;
+  }
+.button{
+  height:35px;
+  padding:10px;
+  border-radius: 10px;
+  background-color: rgb(0, 123, 255);
+  margin-left:15px;
+  margin-right:15px;
+  
 }
-
-.card_container_horizontal {
-  display: flex;
-  flex-direction: row; /* Ensure the flex direction is set to row */
-  justify-content: flex-start; /* Adjust the alignment as needed */
-  gap: 20px; /* Set the desired gap between the cards */
-  overflow-x: scroll; /* Enable horizontal scrolling */
+.tutorial_button > .button:hover{
+  transform: scale(1.05);
 }
-
-.card_tutorial_horizontal {
-  flex: 0 0 80%;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  min-width: 300px;
-  max-width: 200px;
+.tutorial_button > .button:active{
+  background-color:rgba(0, 123, 255, 0.692) ;
 }
-
-.tutorial_heading {
-  font-size: 24px;
+.tutorial_cards_info{
+  display:flex;
+  flex-direction: row;
+  max-height: 800px;
+  overflow-y: scroll;
+  
+  
+}
+.tutorial_cards_info::-webkit-scrollbar{
+  width:0;
+}
+.card_box > h2{
+  color:grey;
+}
+.card_topic{
+  display:flex;
+  flex-direction:column;
+  border:1px solid whitesmoke;
+  border-radius: 10px;
   margin-bottom: 10px;
+  padding:10px;
+  box-shadow: 2px 2px 5px 0 rgba(0,0,0,0.2);
 }
-
-.card_tutorial {
-  margin: 20px 0;
+.tutorial_card_description{
+  color:rgb(52, 45, 45);
 }
-
-.card_tutorial h3 {
-  font-size: 20px;
-  margin-bottom: 10px;
+.card_topic_button:hover{
+  cursor: pointer;
+  /* margin-left:40px; */
 }
-
-.card_tutorial hr {
-  border: 0.5px solid #ddd;
-  margin: 10px 0;
+.card_topic_button:active{
+  color:darkgray;
 }
+              

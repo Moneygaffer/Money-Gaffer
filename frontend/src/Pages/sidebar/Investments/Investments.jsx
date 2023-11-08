@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './Investments.css'
+import InvestmentCSS from './Investments.css'
 import {v4 as uuid} from 'uuid'
 import axios from 'axios';
 const apiUrl = 'https://omnireports.azurewebsites.net/api/CRUD_irwb?';
@@ -54,13 +54,13 @@ function Investments() {
     setCurValue("");
   }
   return (
-    <div className='page-container3'>
-      <div className='container3'>
-        <div className='form-container3'>
+    <div className={InvestmentCSS.page_container3}>
+      <div className={InvestmentCSS.container3}>
+        <div className={InvestmentCSS.form_container3}>
         <form onSubmit={handlesubmit}>
           <h2> Your Investments </h2>
-          <div className='form-group3'>
-            <div className='form-column'>
+          <div className={InvestmentCSS.form_group3}>
+            <div className={InvestmentCSS.form_column}>
             <label> Investment Type</label>
             <input type='text' 
             id='invType'
@@ -84,7 +84,7 @@ function Investments() {
 
           </div>
 
-          <div className='form-column'>
+          <div className={InvestmentCSS.form_column}>
             <label> Start Date</label>
             <input type='date' 
             id='startDate'
@@ -107,7 +107,7 @@ function Investments() {
              onChange={(e)=>setCurValue(e.target.value)}></input>
           </div>
         </div>
-        <div className='right-column1' style={{marginRight:"80%"}}>
+        <div className={InvestmentCSS.right_column1} style={{marginRight:"80%"}}>
             <button type='submit' >Save </button>
           </div>
         </form>
