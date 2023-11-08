@@ -74,7 +74,7 @@
   input[type="number"],
   input[type="date"] {
     width: 100%;
-    padding: 10px;
+    padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
@@ -82,7 +82,7 @@
   }
   input[type="text"] {
     width: 100%;
-    padding: 12px;
+    padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
@@ -106,7 +106,7 @@
   
   /* Table Container Styles */
   .table-container {
-    width: 55%; /* Adjust the width for the table container */
+    width: 63%; /* Adjust the width for the table container */
     padding: 20px;
     background-color: #f3f3f3;
     border-radius: 10px;

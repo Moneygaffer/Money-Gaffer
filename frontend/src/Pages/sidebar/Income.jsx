@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, {  useState,useEffect } from "react";
 import "./incomecss.css";
 import axios from "axios";
 import { TablePagination } from "@mui/material";
@@ -13,7 +13,7 @@ function FormTable({ addTransaction }) {
   const [bankName, setBankName] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState("");
-  const [data] = useState([]);
+  const [data, setData] = useState([]);
   const [bankid,setBankId]=useState("");
   const [address,setAddress]=useState("");
   const [page, setPage] = useState(0);
@@ -22,6 +22,39 @@ function FormTable({ addTransaction }) {
 
   const userIdObj = session.find((item) => item.Name === "_id");
   const userId = userIdObj ? userIdObj.Value : null;
+
+  const parseData = (data) => {
+    const modifiedData = data
+      .replaceAll('ISODate(', '') 
+      .replaceAll('ObjectId(', '')
+      .replaceAll(')', '');
+  
+    try {
+      return JSON.parse(modifiedData);
+    } catch (error) {
+      console.error('Error parsing data:', error);
+      return [];
+    }
+  };
+  
+  const fetchIncomeData = async () => {
+    try {
+      const { data } = await axios.post(apiUrl, {
+        crudtype: 2,
+        recordid: null,
+        collectionname: 'income',
+        userId: userId,
+      });
+      const temp = parseData(data.data);
+      console.log("The details from databse:",temp)
+      setData(temp);
+    } catch (error) {
+      console.error('API Error:', error);
+    }
+  };
+  useEffect(() => {
+    fetchIncomeData();
+  }, [userId]);  
 
 const handleSubmit = async (e) => {
   e.preventDefault();
@@ -99,7 +132,6 @@ const handleSubmit = async (e) => {
   setDate("");
 };
 
-
   return (
     <div className="page-container">
       <div className="container">
@@ -171,31 +203,26 @@ const handleSubmit = async (e) => {
                 <th>Savings Account</th>
                 <th>Amount</th>
                 <th>Date</th>
-                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {data
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((item, index) => {
-                  return (
-                    <tr key={index}>
-                      <td>{item["incomeTitle"]}</td>
-                      <td>{item.savingsAccount}</td>
-                      <td>{item.amount}</td>
-                      <td>{item.date}</td>
-                      <td>
-                        <button className="edit">
-                          Edit
-                        </button>
-                        <button  className="delete">
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-            </tbody>
+  {data &&
+    data.length > 0 &&
+    data
+      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+      .map((item, index) => {
+        console.log("Mapped Item:", item);
+        return item.accountDetails.map((detail, idx) => (
+          <tr key={idx}>
+            <td>{detail.description}</td>
+            <td>{detail.accountId}</td>
+            <td>{detail.amount}</td>
+            <td>{detail.dot}</td>
+          </tr>
+        ));
+      })}
+</tbody>
+
           </table>
           <TablePagination
             component="div"
