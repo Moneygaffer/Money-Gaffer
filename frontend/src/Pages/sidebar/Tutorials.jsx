@@ -1,5 +1,5 @@
 import React from "react";
-import  TutorialsCSS from "./Tutorials.module.css";
+import TutorialsCSS from "./Tutorials.module.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -52,8 +52,16 @@ function Tutorials() {
   return (
     <div className={TutorialsCSS.tutorial_container}>
       <div className={TutorialsCSS.tutorial_button}>
-        <button  className={TutorialsCSS.button}onClick={() => setActiveSection("insurance")}>Insurance</button>
-        <button  className={TutorialsCSS.button}onClick={() => setActiveSection("deposit")}>
+        <button
+          className={TutorialsCSS.button}
+          onClick={() => setActiveSection("insurance")}
+        >
+          Insurance
+        </button>
+        <button
+          className={TutorialsCSS.button}
+          onClick={() => setActiveSection("deposit")}
+        >
           Deposit Accounts
         </button>
       </div>

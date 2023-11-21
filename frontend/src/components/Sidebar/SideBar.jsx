@@ -4,14 +4,14 @@ import { HiCreditCard } from "react-icons/hi";
 import { MdMessage } from "react-icons/md";
 import { BiAnalyse, BiSearch } from "react-icons/bi";
 import { BiCog } from "react-icons/bi";
-import {BsBookFill} from "react-icons/bs";
+import { BsBookFill } from "react-icons/bs";
 import { BsFillBookmarksFill } from "react-icons/bs";
-import {  AiTwotoneFileExclamation } from "react-icons/ai";
+import { AiTwotoneFileExclamation } from "react-icons/ai";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import SidebarMenu from "./SidebarMenu";
-import PersonIcon from '@mui/icons-material/Person';
-import LiveTvIcon from '@mui/icons-material/LiveTv';
+import PersonIcon from "@mui/icons-material/Person";
+import LiveTvIcon from "@mui/icons-material/LiveTv";
 const routes = [
   {
     path: "/dashboard",
@@ -19,9 +19,9 @@ const routes = [
     icon: <FaHome />,
   },
   {
-    path:"/AccountInfo",
-    name:"Create Account",
-    icon:<PersonIcon fontSize="small"/>
+    path: "/AccountInfo",
+    name: "Create Account",
+    icon: <PersonIcon fontSize="small" />,
   },
   {
     path: "/income",
@@ -117,7 +117,7 @@ const SideBar = ({ children }) => {
 
   return (
     <>
-      <div className="main-container" >
+      <div className="main-container">
         <motion.div
           // animate={{
           //   width: isOpen ? "300px" : "45px",
@@ -126,7 +126,7 @@ const SideBar = ({ children }) => {
           //     duration: 0.0,
           //     type: "spring",
           //     damping: 10,
-          //   },   
+          //   },
           // }}
           className={"sidebar"}
         >
@@ -206,7 +206,7 @@ const SideBar = ({ children }) => {
           </section>
         </motion.div>
 
-        <main >{children   }</main>
+        <main>{children}</main>
       </div>
     </>
   );

@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './Records.css';
+import React from "react";
+import { Link } from "react-router-dom";
+import "./Records.css";
 
 const Records = () => {
   return (
@@ -31,7 +31,6 @@ const Records = () => {
           Explore Income Records
         </Link>
       </div>
-     
     </div>
   );
 };

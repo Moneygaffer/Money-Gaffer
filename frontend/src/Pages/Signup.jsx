@@ -10,33 +10,27 @@ function Signup() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
-      crudtype: 1,
-      recordid: null,
-      collectionname: "irwbusers",
-      data: {
-        username: name,
-        email: email,
-        password: password,
-        role: "user",
-      },
+      username: name,
+      email: email,
+      password: password,
     };
     try {
-      const response = await axios.post("https://omnireports.azurewebsites.net/api/register?", data, {Authorization : ""});
-      if(response){
-        console.log(response);  
-        navigate('/login');
+      const response = await axios.post(
+        "https://omnireports.azurewebsites.net/api/register?",
+        data
+      );
+      if (response) {
+        console.log(response);
+        navigate("/login");
       }
-      
     } catch (error) {
       console.error("Signup Error:", error);
     }
   };
-   
+
   return (
     <div className="signup-container">
       <motion.div
