@@ -54,6 +54,7 @@
   box-shadow: 2px 2px 5px 0 rgba(0,0,0,0.2);
 }
 .tutorial_card_description{
+  width: 1000px;
   color:rgb(52, 45, 45);
 }
 .card_topic_button:hover{

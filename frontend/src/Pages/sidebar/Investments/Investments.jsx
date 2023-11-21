@@ -13,8 +13,9 @@ function Investments() {
   const [curValue,setCurValue]=useState("");
 
   const session=JSON.parse(sessionStorage.getItem("user"));
-  const userIdObj=session.find((item)=>item.Name==="_id");
-  const userId=userIdObj?userIdObj.Value:null;
+  const userIdObj = session && session.Name === "_id" ? session : null;
+const userId = userIdObj ? userIdObj.Value : null;
+
 
   const handlesubmit=async(e)=>{
     e.preventDefault();

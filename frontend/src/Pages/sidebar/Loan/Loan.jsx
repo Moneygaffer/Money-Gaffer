@@ -16,8 +16,9 @@ function Loan() {
   const [pendAmount, setPendAmount] = useState('');
 
   const session = JSON.parse(sessionStorage.getItem('user'));
-  const userIdObj = session.find((item) => item.Name === '_id');
+  const userIdObj = session && session.Name === "_id" ? session : null;
   const userId = userIdObj ? userIdObj.Value : null;
+  
 
   const handlesubmit=async(e)=>{
     e.preventDefault();

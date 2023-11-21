@@ -29,8 +29,14 @@ function Login() {
 
       if (loginResponse.data.status === "PASS") {
       const temp =   JSON.parse(loginResponse.data.data.replace(/ObjectId\("(\w+)"\)/g, '"$1"'));
-      console.log(temp)
-        sessionStorage.setItem("user", JSON.stringify(temp[0]))
+      const temp1 =   loginResponse.data.token;
+     const temp3 = {token : temp1 ,...temp[0]}
+      
+        sessionStorage.setItem("user",
+          
+          JSON.stringify(temp3));
+          axios.defaults.headers.common['Authorization'] = `Bearer ${temp1}`;
+
         navigate("/dashboard");
         
       } else {

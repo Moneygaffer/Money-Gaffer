@@ -26,9 +26,9 @@ function Signup() {
       },
     };
     try {
-      const response = await axios.post("https://omnireports.azurewebsites.net/api/CRUD_irwb", data);
+      const response = await axios.post("https://omnireports.azurewebsites.net/api/register?", data, {Authorization : ""});
       if(response){
-        console.log(response);
+        console.log(response);  
         navigate('/login');
       }
       
