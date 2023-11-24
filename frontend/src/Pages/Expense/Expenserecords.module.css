@@ -126,3 +126,20 @@
     font-style: italic;
     color: #007bff;
   }
+  .filtered_record_heading{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  .pdfbutton{
+    font-size: 11px;
+    width: fit-content;
+    height: fit-content;
+    background-color: rgb(255, 12, 61);
+    margin-left:300px;
+    
+  }
+  .pdfbutton:hover{
+    transform:scale(1.1);
+    
+  }

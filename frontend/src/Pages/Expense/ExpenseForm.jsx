@@ -4,6 +4,12 @@ import axios from "axios";
 import { TablePagination } from "@mui/material";
 import { v4 as uuid } from "uuid";
 import { Link } from "react-router-dom";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import 'jspdf-autotable'
+import jsPDF from 'jspdf';
+
+
 
 const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
 
@@ -18,7 +24,8 @@ function FormTable({ addTransaction }) {
   const [address, setAddress] = useState("");
   const [editMode, setEditMode] = useState("");
   const [editRecordId, setEditRecordId] = useState("");
-  const [rowPage, setRowPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(9);
+  const [expenseType,setExpenseType]=useState("")
 
   const session = JSON.parse(sessionStorage.getItem("user"));
   // const userIdObj=session.find((item)=>item.Name==="_id")
@@ -26,9 +33,9 @@ function FormTable({ addTransaction }) {
   const userIdObj = session && session.Name === "_id" ? session : null;
   const userId = userIdObj ? userIdObj.Value : null;
 
-  const moreinfo = () => {
-    setRowPage(rowPage + 2);
-  };
+  // const moreinfo = () => {
+  //   setRowPage(rowPage + 2);
+  // };
   const parseData = (data) => {
     const modifiedData = data
       .replaceAll("ISODate(", "")
@@ -41,6 +48,25 @@ function FormTable({ addTransaction }) {
       return [];
     }
   };
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    const tableColumn = [ 'Account ID', 'Description', 'Amount', 'Date'];
+    const tableRows = [];
+
+flattenedData.forEach((item) => {
+  const {  accountId, description, amount, dot } = item;
+  const rowData = [ accountId, description, amount, new Date(dot).toLocaleDateString()];
+  tableRows.push(rowData);
+});
+
+
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+    });
+
+    doc.save('accountDetails.pdf');
+  }
   const fetchExpenseData = async () => {
     try {
       const { data } = await axios.post(
@@ -85,7 +111,7 @@ function FormTable({ addTransaction }) {
     setDate(editRecord.dot);
     //setData(editRecord)
     setEditMode(true);
-    setEditRecordId(recordId);
+    setEditRecordId(editRecord.recordId);
   };
   const handleCancelEdit = () => {
     setExpenseTitle("");
@@ -110,6 +136,8 @@ function FormTable({ addTransaction }) {
             description: expenseTitle,
             accountId: bankid,
             amount: amount,
+            expenseType:expenseType,
+            bankName:bankName,
             dot: new Date(date).toISOString().split("T")[0],
           },
         });
@@ -150,7 +178,7 @@ function FormTable({ addTransaction }) {
                   detail.address === address.toLowerCase()
               );
               if (foundAccount) {
-                setBankId(foundAccount.recordId);
+                setBankId(foundAccount.accountId);
                 break;
               }
             }
@@ -168,8 +196,10 @@ function FormTable({ addTransaction }) {
             collectionname: "expense",
             data: {
               description: expenseTitle,
-              accountId: foundAccount.recordId,
+              accountId: foundAccount.accountId,
               amount: amount,
+              expenseType:expenseType,
+              bankName:bankName,
               dot: new Date(date).toISOString().split("T")[0],
             },
           },
@@ -189,6 +219,7 @@ function FormTable({ addTransaction }) {
     }
     setExpenseTitle("");
     setBankName("");
+    setExpenseType("");
     setAddress("");
     setAmount("");
     setDate("");
@@ -231,6 +262,8 @@ function FormTable({ addTransaction }) {
       console.log("API Error:", error);
     }
   };
+  const flattenedData = data.flatMap((item) => item.accountDetails);
+
   return (
     <div className={ExpenseCSS.page_container}>
       <div className={ExpenseCSS.container}>
@@ -246,6 +279,17 @@ function FormTable({ addTransaction }) {
               onChange={(e) => setExpenseTitle(e.target.value)}
             />
           </div>
+          <div className={ExpenseCSS.form_group}>
+            <label htmlFor="expenseTye">Expense Type</label>
+            <input
+              type="text"
+              id="expenseType"
+              placeholder="Enter Expense Type"
+              value={expenseType}
+              onChange={(e) => setExpenseType(e.target.value)}
+            />
+          </div>
+
           <div className={ExpenseCSS.form_group}>
             <label>Savings Account</label>
             <select
@@ -311,49 +355,64 @@ function FormTable({ addTransaction }) {
             <Link to="/Expenserecords" className={ExpenseCSS.btn_2}>
               Expense Records
             </Link>
+            <button onClick={generatePDF}  className={ExpenseCSS.pdfbutton}>Export to PDF</button>
+
           </h2>
           <table>
             <thead>
               <tr>
                 <th>Expense Title</th>
                 <th>Savings Account</th>
+                <th>Bank Name</th>
                 <th>Amount</th>
                 <th>Date</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {data &&
-                data.length > 0 &&
-                data.map((item, index) =>
-                  item.accountDetails.slice(0, rowPage).map((detail, idx) => (
-                    <tr key={idx} className="pagination-data">
-                      <td>{detail.description}</td>
-                      <td>{detail.accountId}</td>
-                      <td>{detail.amount}</td>
-                      <td>{detail.dot}</td>
-                      <td>
-                        <button
-                          className={ExpenseCSS.btn_1}
-                          onClick={() => handleEdit(detail.recordId)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className={ExpenseCSS.btn}
-                          onClick={() => handleDelete(detail.recordId)}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
+            {flattenedData
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((detail, idx) => (
+                      <tr key={idx} className="pagination-data">
+                        <td>{detail.description}</td>
+                        <td>{detail.accountId}</td>
+                        <td>{detail.bankName}</td>
+                        <td>{detail.amount}</td>
+                        <td className={ExpenseCSS.td_1}>
+              {new Date(detail.dot).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              })}
+            </td>
+                        <td>
+                          <EditIcon
+                            onClick={() => handleEdit(detail.recordId)}
+                            className={ExpenseCSS.editIcon}
+                          />
+                          <DeleteIcon
+                            onClick={() => handleDelete(detail.recordId)}
+                            className={ExpenseCSS.deleteIcon}
+
+                          />
+                        </td>
+                      </tr>
+                    ))
+              }
             </tbody>
           </table>
-          <button className={ExpenseCSS.btn_info} onClick={moreinfo}>
-            More info
-          </button>
+          <TablePagination
+            component="div"
+            count={flattenedData.length}
+            page={page}
+            onPageChange={(event, newPage) => setPage(newPage)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(event) => {
+              setRowsPerPage(parseInt(event.target.value, 10));
+              setPage(0);
+            }}
+            rowsPerPageOptions={[4, 6, 8, 9]}
+          />
         </div>
       </div>
     </div>

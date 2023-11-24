@@ -10,8 +10,10 @@ import { AiTwotoneFileExclamation } from "react-icons/ai";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import SidebarMenu from "./SidebarMenu";
-import PersonIcon from "@mui/icons-material/Person";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LiveTvIcon from "@mui/icons-material/LiveTv";
+import ProfileCard from "./ProfileCard";
+
 const routes = [
   {
     path: "/dashboard",
@@ -21,7 +23,7 @@ const routes = [
   {
     path: "/AccountInfo",
     name: "Create Account",
-    icon: <PersonIcon fontSize="small" />,
+    icon: <AccountCircleIcon fontSize="small" />,
   },
   {
     path: "/income",
@@ -56,7 +58,7 @@ const routes = [
     subRoutes: [
       {
         path: "/settings/profile",
-        name: "Profile ",
+        name: "ProfilePage",
         icon: <FaUser />,
       },
       {
@@ -80,7 +82,16 @@ const routes = [
 
 const SideBar = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
-  const toggle = () => setIsOpen(true);
+  const [isProfileOpen,setIsProfileOpen]=useState(false)
+  const toggle = () => setIsOpen(!isOpen);
+  const openProfile=()=>setIsProfileOpen(true);
+  const closeProfile=()=>setIsProfileOpen(false);
+  const session = JSON.parse(sessionStorage.getItem("user"));
+
+  // const userIdObj = session.find((item) => item.Name === "_id");
+  // const userId = userIdObj ? userIdObj.Value : null;
+  const userIdObj = session && session.Name === "_id" ? session : null;
+  const userId = userIdObj ? userIdObj.Value : null;
   const inputAnimation = {
     hidden: {
       width: 0,
@@ -118,19 +129,12 @@ const SideBar = ({ children }) => {
   return (
     <>
       <div className="main-container">
-        <motion.div
-          // animate={{
-          //   width: isOpen ? "300px" : "45px",
-
-          //   transition: {
-          //     duration: 0.0,
-          //     type: "spring",
-          //     damping: 10,
-          //   },
-          // }}
-          className={"sidebar"}
-        >
+        <motion.div className="sidebar"> {/* Removed unnecessary brackets */}
           <div className="top_section">
+          <div onClick={openProfile}>
+              <AccountCircleIcon fontSize="large" />
+            </div>
+           
             <AnimatePresence>
               {isOpen && (
                 <motion.h1
@@ -144,15 +148,28 @@ const SideBar = ({ children }) => {
                 </motion.h1>
               )}
             </AnimatePresence>
-
+            <AnimatePresence>
+        {isProfileOpen && (
+          <motion.div
+            className="overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <ProfileCard user={session[0].Value} closeProfile={closeProfile} />
+          </motion.div>
+        )}
+      </AnimatePresence>
             <div className="bars">
               <FaBars onClick={toggle} />
             </div>
-          </div>
+            </div>
+
           <div className="search">
             <div className="search_icon">
               <BiSearch />
             </div>
+
             <AnimatePresence>
               {isOpen && (
                 <motion.input
@@ -166,11 +183,13 @@ const SideBar = ({ children }) => {
               )}
             </AnimatePresence>
           </div>
+          
           <section className="routes">
             {routes.map((route, index) => {
               if (route.subRoutes) {
                 return (
                   <SidebarMenu
+                    key={index}
                     setIsOpen={setIsOpen}
                     route={route}
                     showAnimation={showAnimation}
@@ -178,7 +197,6 @@ const SideBar = ({ children }) => {
                   />
                 );
               }
-
               return (
                 <NavLink
                   to={route.path}

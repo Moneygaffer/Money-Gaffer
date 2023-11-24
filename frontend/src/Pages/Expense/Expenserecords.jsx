@@ -1,13 +1,15 @@
-// src/components/Expenserecords.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ExpenserecordCSS from "./Expenserecords.module.css";
+import 'jspdf-autotable'
+import jsPDF from 'jspdf';
 
 const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb";
 const session = JSON.parse(sessionStorage.getItem("user"));
 const userIdObj = session && session.Name === "_id" ? session : null;
 const userId = userIdObj ? userIdObj.Value : null;
 const Expenserecords = () => {
+  const [accountDetails,setAccountDetails]=useState([])
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [expenseTitle, setExpenseTitle] = useState("");
@@ -28,7 +30,41 @@ const Expenserecords = () => {
       return [];
     }
   };
-
+  useEffect(() => {
+    console.log("filtered data", filteredRecords);
+    setAccountDetails(filteredRecords);
+    
+  }, [filteredRecords]);
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    const tableColumn = ['Account ID', 'Description', 'Amount', 'Date'];
+    const tableRows = [];
+  
+    filteredRecords.forEach((item) => {
+      item.accountDetails.forEach((detail) => {
+        const dotDate = new Date(detail.dot);
+        const isWithinDateRange =
+          dotDate >= new Date(startDate) && dotDate <= new Date(endDate);
+        const hasMatchingTitle = detail.description === expenseTitle;
+  
+        if (isWithinDateRange && (expenseTitle === '' || hasMatchingTitle)) {
+          const { accountId, description, amount, dot } = detail;
+          const rowData = [accountId, description, amount, new Date(dot).toLocaleDateString()];
+          tableRows.push(rowData);
+        }
+      });
+    });
+  
+    doc.autoTable({
+      head: [tableColumn],
+      body: tableRows,
+    });
+  
+    doc.save('accountDetails.pdf');
+  };
+  
+  
+  
   const handleRetrieveDetails = async (e) => {
     e.preventDefault();
     try {
@@ -53,12 +89,7 @@ const Expenserecords = () => {
       console.log("API Error:", error);
     }
   };
-  const sdate = parseInt(startDate.slice(8, 10), 10);
-  const smonth = parseInt(startDate.slice(5, 7), 10);
-  const syear = parseInt(startDate.slice(0, 4), 10);
-  const edate = parseInt(endDate.slice(8, 10), 10);
-  const emonth = parseInt(endDate.slice(5, 7), 10);
-  const eyear = parseInt(endDate.slice(0, 4), 10);
+ 
 
   const moreinfo = () => {
     setRowPage(rowPage + 2);
@@ -114,7 +145,10 @@ const Expenserecords = () => {
         </div>
         <div className={ExpenserecordCSS.table_container}>
           <div className={ExpenserecordCSS.filtered_records}>
+          <div className={ExpenserecordCSS.filtered_record_heading}>
             <h3>Filtered Expense Records</h3>
+            <button onClick={generatePDF}  className={ExpenserecordCSS.pdfbutton}>Export to PDF</button>
+    </div>
             <table>
               <thead>
                 <tr>
@@ -125,48 +159,40 @@ const Expenserecords = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredRecords &&
-                  filteredRecords.map((item, index) =>
-                    item.accountDetails.map((detail, idx) => {
-                      const dfirst =
-                        parseInt(detail.dot.slice(5, 7), 10) > smonth;
-                      const dend =
-                        parseInt(detail.dot.slice(5, 7), 10) < emonth;
-                      const isAfterStartDate =
-                        (parseInt(detail.dot.slice(8, 10), 10) >= sdate ||
-                          dfirst) &&
-                        parseInt(detail.dot.slice(5, 7), 10) >= smonth &&
-                        parseInt(detail.dot.slice(0, 4), 10) >= syear;
+              {filteredRecords &&
+    filteredRecords.map((item, index) =>
+      item.accountDetails.map((detail, idx) => {
+        const dotDate = new Date(detail.dot);
+        const isWithinDateRange =
+          dotDate >= new Date(startDate) && dotDate <= new Date(endDate);
+        const hasMatchingTitle = detail.description === expenseTitle;
 
-                      const isBeforeEndDate =
-                        (parseInt(detail.dot.slice(8, 10), 10) <= edate ||
-                          dend) &&
-                        parseInt(detail.dot.slice(5, 7), 10) <= emonth &&
-                        parseInt(detail.dot.slice(0, 4), 10) <= eyear;
-                      const desTitle = detail.description === expenseTitle;
-                      const all =
-                        isBeforeEndDate && isAfterStartDate && desTitle;
-                      if (all) {
-                        expensesum = expensesum + parseInt(detail.amount);
-                      }
-                      if (all) {
-                        return (
-                          <>
-                            <tr key={idx}>
-                              <td>{detail.description}</td>
-                              <td>{detail.accountId}</td>
-                              <td>{detail.amount}</td>
-                              <td>{detail.dot}</td>
-                            </tr>
-                          </>
-                        );
-                      }
-                    })
-                  )}
-                <tr>
-                  <td colSpan="2">Total:</td>
-                  <td>{expensesum}</td>
-                </tr>
+        if (isWithinDateRange && (expenseTitle === '' || hasMatchingTitle)) {
+          expensesum = expensesum + parseInt(detail.amount);
+
+          return (
+            <tr key={idx}>
+              <td>{detail.description}</td>
+              <td>{detail.accountId}</td>
+              <td>{detail.amount}</td>
+              <td className={ExpenserecordCSS.td_1}>
+              {new Date(detail.dot).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              })}
+            </td>
+            </tr>
+          );
+        } else {
+          return null; 
+        }
+      })
+    )}
+  <tr>
+    <td colSpan="2">Total:</td>
+    <td>{expensesum}</td>
+  </tr>
               </tbody>
             </table>
             <button className={ExpenserecordCSS.btn_info} onClick={moreinfo}>

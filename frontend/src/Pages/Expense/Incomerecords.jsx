@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect ,useRef} from "react";
 import axios from "axios";
 import IncomerecordCSS from "./Incomerecords.module.css";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
 
 const Incomerecords = () => {
+  const [accountDetails, setAccountDetails] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [incomeTitle, setIncomeTitle] = useState("");
@@ -32,7 +35,43 @@ const Incomerecords = () => {
 
   useEffect(() => {
     console.log("filtered data", filteredRecords);
+    setAccountDetails(filteredRecords);
+    
   }, [filteredRecords]);
+  
+  //for pdf
+  
+    // const pdfRef = useRef();
+  
+    const generatePDF = () => {
+      const doc = new jsPDF();
+      const tableColumn = ['Account ID', 'Description', 'Amount', 'Date'];
+      const tableRows = [];
+    
+      filteredRecords.forEach((item) => {
+        item.accountDetails.forEach((detail) => {
+          const dotDate = new Date(detail.dot);
+          const isWithinDateRange =
+            dotDate >= new Date(startDate) && dotDate <= new Date(endDate);
+          const hasMatchingTitle = detail.description === incomeTitle;
+    
+          if (isWithinDateRange && (incomeTitle === '' || hasMatchingTitle)) {
+            const { accountId, description, amount, dot } = detail;
+            const rowData = [accountId, description, amount, new Date(dot).toLocaleDateString()];
+            tableRows.push(rowData);
+          }
+        });
+      });
+    
+      doc.autoTable({
+        head: [tableColumn],
+        body: tableRows,
+      });
+    
+      doc.save('accountDetails.pdf');
+    };
+    
+    
 
   const handleRetrieveDetails = async (e) => {
     e.preventDefault();
@@ -57,12 +96,6 @@ const Incomerecords = () => {
       console.error("API Error:", error);
     }
   };
-  const sdate = parseInt(startDate.slice(8, 10), 10);
-  const smonth = parseInt(startDate.slice(5, 7), 10);
-  const syear = parseInt(startDate.slice(0, 4), 10);
-  const edate = parseInt(endDate.slice(8, 10), 10);
-  const emonth = parseInt(endDate.slice(5, 7), 10);
-  const eyear = parseInt(endDate.slice(0, 4), 10);
 
   const moreinfo = () => {
     setRowPage(rowPage + 2);
@@ -73,6 +106,7 @@ const Incomerecords = () => {
       <div className={IncomerecordCSS.container}>
         <div className={IncomerecordCSS.form_container}>
           <h2>Income Records</h2>
+          
           <form>
             <div className={IncomerecordCSS.form_group}>
               <label htmlFor="startDate">Start Date:</label>
@@ -119,7 +153,11 @@ const Incomerecords = () => {
         </div>
         <div className={IncomerecordCSS.table_container}>
           <div className={IncomerecordCSS.filtered_records}>
+            <div className={IncomerecordCSS.filtered_record_heading}>
             <h3>Filtered Income Records</h3>
+          <button onClick={generatePDF}  className={IncomerecordCSS.pdfbutton}>Export to PDF</button>
+            </div>
+   
             <table>
               <thead>
                 <tr>
@@ -130,49 +168,43 @@ const Incomerecords = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredRecords &&
-                  filteredRecords.map((item, index) =>
-                    item.accountDetails.map((detail, idx) => {
-                      const dfirst =
-                        parseInt(detail.dot.slice(5, 7), 10) > smonth;
-                      const dend =
-                        parseInt(detail.dot.slice(5, 7), 10) < emonth;
-                      const isAfterStartDate =
-                        (parseInt(detail.dot.slice(8, 10), 10) >= sdate ||
-                          dfirst) &&
-                        parseInt(detail.dot.slice(5, 7), 10) >= smonth &&
-                        parseInt(detail.dot.slice(0, 4), 10) >= syear;
 
-                      const isBeforeEndDate =
-                        (parseInt(detail.dot.slice(8, 10), 10) <= edate ||
-                          dend) &&
-                        parseInt(detail.dot.slice(5, 7), 10) <= emonth &&
-                        parseInt(detail.dot.slice(0, 4), 10) <= eyear;
-                      const desTitle = detail.description === incomeTitle;
-                      const all =
-                        isBeforeEndDate && isAfterStartDate && desTitle;
-                      if (all) {
-                        sum = sum + parseInt(detail.amount);
-                      }
-                      if (all) {
-                        return (
-                          <>
-                            <tr key={idx}>
-                              <td>{detail.description}</td>
-                              <td>{detail.accountId}</td>
-                              <td>{detail.amount}</td>
-                              <td>{detail.dot}</td>
-                            </tr>
-                          </>
-                        );
-                      }
-                    })
-                  )}
-                <tr>
-                  <td colSpan="2">Total:</td>
-                  <td>{sum}</td>
-                </tr>
-              </tbody>
+  {filteredRecords &&
+    filteredRecords.map((item, index) =>
+      item.accountDetails.map((detail, idx) => {
+        const dotDate = new Date(detail.dot);
+        const isWithinDateRange =
+          dotDate >= new Date(startDate) && dotDate <= new Date(endDate);
+        const hasMatchingTitle = detail.description === incomeTitle;
+
+        if (isWithinDateRange && (incomeTitle === '' || hasMatchingTitle)) {
+          sum = sum + parseInt(detail.amount);
+
+          return (
+            <tr key={idx}>
+              <td>{detail.description}</td>
+              <td>{detail.accountId}</td>
+              <td>{detail.amount}</td>
+              <td className={IncomerecordCSS.td_1}>
+              {new Date(detail.dot).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              })}
+            </td>
+            </tr>
+          );
+        } else {
+          return null; 
+        }
+      })
+    )}
+  <tr>
+    <td colSpan="2">Total:</td>
+    <td>{sum}</td>
+  </tr>
+</tbody>
+
             </table>
             <button className={IncomerecordCSS.btn_info} onClick={moreinfo}>
               More info

@@ -1,47 +1,69 @@
 .card_container {
-    display: flex;
-    
+  display: flex;
+  
+}
+
+.cardss {
+  display: flex;
+  flex-direction: column;
+  width:310px;
+  padding: 10px;
+  border-radius: 15px;
+  margin-left:8px;
+  height: 120px;
+  margin-right:8px;
+  width:250px;
+  box-shadow: 0 2px 4px rgba(48, 22, 22, 0.1);
+   text-align: center;
+  background: linear-gradient(135deg, rgb(0, 7, 61), #2196f3);
+
+}
+.cardss p{
+  align-items: center;
+}
+
+/* Cards.module.css */
+
+  .card:hover,
+  .card:active {
+    background: linear-gradient(to right, #6045e9 100%, #ffffff 100%);
+    transform: scale(1.01);
   }
   
-  .cardss {
-    display: flex;
-    flex-direction: column;
-    width:310px;
-    padding: 10px;
-    border-radius: 15px;
-    margin-left:8px;
-    height: 120px;
-    margin-right:8px;
-    width:250px;
-    
-    box-shadow: 0 2px 4px rgba(48, 22, 22, 0.1);
-     text-align: center;
-    background: linear-gradient(135deg, rgb(0, 7, 61), #2196f3);
-  
+  .h2{
+    color: rgb(246, 247, 248);
   }
-  
-  
-  .cardss p{
+ .p{
+    color: aliceblue;
+  }
+  .selector{
+    width: 150px;
     align-items: center;
+
   }
-  
-  
-  
-  
-  
-  
-  
-  
-    
-    .card:hover,
-    .card:active {
-      background: linear-gradient(to right, #6045e9 100%, #ffffff 100%);
-      transform: scale(1.01);
-    }
-    
-    .h2{
-      color: rgb(246, 247, 248);
-    }
-   .p{
-      color: aliceblue;
-    }
+
+  /* Cards.module.css */
+
+.dropdownContainer {
+position: relative;
+display: inline-block;
+}
+
+.dropdown {
+appearance: none;
+-moz-appearance: none;
+width: 150px;
+padding: 10px;
+font-size: 16px;
+border: 1px solid #ccc;
+border-radius: 4px;
+cursor: pointer;
+background-color: white;
+position: relative;
+align-items: center;
+
+}
+
+.dropdown:hover {
+background-color: #f5f5f5;
+}

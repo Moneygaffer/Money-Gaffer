@@ -16,9 +16,6 @@ const Records = () => {
           You can categorize expenses, add descriptions, and set dates for
           better financial planning.
         </p>
-        <Link to="/Expenserecords" className="button expense">
-          Explore Expense Records
-        </Link>
       </div>
       <div className="records-section">
         <h2>Income Records</h2>
@@ -27,9 +24,6 @@ const Records = () => {
           income. You can record your salary, bonuses, and other sources of
           income for a complete financial overview.
         </p>
-        <Link to="/Incomerecords" className="button income">
-          Explore Income Records
-        </Link>
       </div>
     </div>
   );

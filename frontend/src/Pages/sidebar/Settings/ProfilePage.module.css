@@ -1,0 +1,102 @@
+
+  .change{
+    height: fit-content;
+    margin-top: 1px;
+  }
+  .card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 800px;
+    margin-left: 200px;
+    height: fit-content;
+    animation: slideIn 0.3s ease-in-out;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #333; /* Darker text color */
+  }
+  
+  strong {
+    margin-right: 5px;
+  }
+  
+  .para {
+    color: #555;
+  display: flex;
+  flex-wrap: wrap;
+  }
+  .inputprofile[type="text"]{
+    width: 300px;  
+  }
+  .inputprofile_confirm[type="text"]{
+    width: 300px;  
+    margin-left: 100px;
+  }
+  .inputprofile[type="password"]{
+    width: 300px;  
+    height: 40px;
+  }
+  .inputprofile_confirm[type="password"]{
+    width: 300px;  
+    height: 40px;
+    margin-left: 100px;
+  }
+  .labelInputGroup{
+    margin-left: 20px;
+  }
+  .labelInputGroup1{
+    margin-left: 100px;
+
+  }
+ 
+  .label {
+    margin: 0;
+    flex: 1; 
+    max-width: 200px; 
+  }
+  button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s ease-in-out;
+  }
+  
+  button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 10;
+    }
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateY(-80px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .h3{
+    background-color: rgb(36, 34, 121);
+    color: aliceblue;
+    height: 40px;
+    text-align: center;
+  }
+  

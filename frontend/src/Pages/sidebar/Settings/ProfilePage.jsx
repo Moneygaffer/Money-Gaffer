@@ -1,55 +1,120 @@
-import React from 'react';
-import { Container, Paper, Avatar, Typography, Grid, MenuItem, Button,TextField } from '@mui/material';
-import LockIcon from '@mui/icons-material/Lock';
+import React, { useState } from "react";
+import ProfilePageCSS from "./ProfilePage.module.css";
+import axios from "axios";
+const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
 
-const ProfilePage = () => {
-  // Sample user data
-  const username = 'John Doe';
-  const email = 'johndoe@example.com';
-  const dob = '1990-01-01';
-  const gender = 'Male';
+function ProfilePage() {
+  const session = JSON.parse(sessionStorage.getItem("user"));
 
+  const userId =
+    session && session[0] && session[0].Value ? session[0].Value : null;
+  const username =
+    session && session[1] && session[1].Value ? session[1].Value : null;
+  const email =
+    session && session[2] && session[2].Value ? session[2].Value : null;
+  const role =
+    session && session[3] && session[3].Value ? session[3].Value : null;
+ // const token = session && session.token ? session.token : null;
+  console.log(username);
+  console.log(email);
+  console.log(role);
+ const [newPassword,setNewPassword]=useState("");
+ const [confirmNewPassword,setConfirmNewPassword]=useState("");
+ const [passwordChangeError,setPasswordChangeError]=useState(null);
+
+ const handlePasswordChange=async(e)=>{
+  e.preventDefault();
+  try{
+    if(newPassword!==confirmNewPassword){
+      setPasswordChangeError("Password donot match");
+      return;
+    }
+    const response=await axios.post(apiUrl,{
+      crudType:3,
+      userId:session[0].Value,
+      collectionname:"irwbusers",
+      newPassword:newPassword,
+    },{
+      Authorization:session.token,
+    })
+    console.log("New Password:",newPassword)
+    if(response.data.status=="PASS"){
+      setPasswordChangeError(null);
+    }
+    else{
+      setPasswordChangeError("Password change failed. Please try again ")
+    }
+
+  }catch(error){
+    console.log("API Error:",error);
+    setPasswordChangeError("Please try again later")
+
+  }
+   
+ }
   return (
-    <Container maxWidth="sm" style={{ marginTop: '50px' }}>
-      <Paper elevation={3} style={{ padding: '20px' }}>
-        <Grid container spacing={2} justifyContent="center" alignItems="center">
-          <Grid item xs={12} align="center">
-            <Avatar style={{ backgroundColor: '#3f51b5', width: '100px', height: '100px' }}>
-              <LockIcon style={{ fontSize: '48px' }} />
-            </Avatar>
-          </Grid>
-          <Grid item xs={12} align="center">
-            <Typography variant="h4">{username}</Typography>
-          </Grid>
-        </Grid>
-        <div style={{ marginTop: '20px' }}>
-          <Typography variant="h6">User Information:</Typography>
-          <Typography variant="body1">Email: {email}</Typography>
-          <Typography variant="body1">Date of Birth: {dob}</Typography>
-          <Typography variant="body1">Gender: {gender}</Typography>
-        </div>
-        <div style={{ marginTop: '20px' }}>
-          <Typography variant="h6">Change Password:</Typography>
-          {/* Add password change form here */}
-          <TextField
-            label="New Password"
-            fullWidth
-            type="password"
-            required
-          />
-          <TextField
-            label="Confirm Password"
-            fullWidth
-            type="password"
-            required
-          />
-          <Button variant="contained" color="primary" fullWidth>
-            Change Password
-          </Button>
-        </div>
-      </Paper>
-    </Container>
-  );
-};
+    <div className={ProfilePageCSS.card}>
+      <h3 className={ProfilePageCSS.h3}>User Profile</h3>
+      {userId && (
+        <>
+          <p className={ProfilePageCSS.para}>
+            <div className={ProfilePageCSS.labelInputGroup}>
+              <label className={ProfilePageCSS.label}>Name:</label>
+              <input
+                className={ProfilePageCSS.inputprofile}
+                type="text"
+                value={username}
+                placeholder="Enter name"
+              />
+               <label className={ProfilePageCSS.label}>UserId:</label>
+              <input
+                className={ProfilePageCSS.inputprofile}
+                type="text"
+                value={userId}
+                readOnly
+              />
+            </div>
+            <div className={ProfilePageCSS.labelInputGroup1}>
+              <label className={ProfilePageCSS.label}>Email:</label>
+              <input
+                className={ProfilePageCSS.inputprofile}
+                type="text"
+                value={email}
+                readOnly
+              />
+              <label className={ProfilePageCSS.label}>Role:</label>
+              <input
+                className={ProfilePageCSS.inputprofile}
+                type="text"
+                value={role}
+                readOnly
+              />
+            </div>
+            <div className={ProfilePageCSS.labelInputGroup}>
+              <label className={ProfilePageCSS.label}> PASSWORD CHANGE</label>
+              <p>{passwordChangeError && <span>{passwordChangeError}</span>}</p>
 
+             <p> Leave passwords empty when you dont want to change it</p>
+              <input
+                className={ProfilePageCSS.inputprofile}
+                type="password"
+                placeholder="New Password"
+                onChange={(e)=>setNewPassword(e.target.value)}
+              ></input>
+              <input
+                className={ProfilePageCSS.inputprofile_confirm}
+                type="password"
+                placeholder="Confirm Password"
+                onChange={(e)=>setConfirmNewPassword(e.target.value)}
+              ></input>
+              <button className={ProfilePageCSS.change} onClick={handlePasswordChange}>
+                CHANGE PASSWORD
+              </button>
+            </div>
+          </p>
+        </>
+      )}
+    </div>
+  );
+}
 export default ProfilePage;

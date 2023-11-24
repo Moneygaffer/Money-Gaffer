@@ -20,8 +20,8 @@
 }
 
 .container3:hover {
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-}
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);}
+  
 .form_column {
   flex-basis: 45%;
   padding: 0 10px;
@@ -30,9 +30,9 @@
 .form_container3 {
   width: 600px;
   padding: 20px;
-  box-shadow: 5px 5px 10px rgb(53, 14, 228);
-    background-color: #f3f3f3;
+  box-shadow: 5px 5px 10px rgb(53, 14, 228);  background-color: #f3f3f3;
   border-radius: 10px;
+  background-color: #f3f3f39a;
   animation: fadein 1s;
 }
 
@@ -41,7 +41,7 @@
   padding-bottom: 10px;
   border-bottom: 2px solid #007bff;
   font-size: 24px;
-  text-align: center;
+  color: #007bff;
 }
 
 .form_group3 {
@@ -91,4 +91,22 @@ button[type='submit'] {
 
 button[type='submit']:hover {
   background-color: #0056b3;
+}
+@media (max-width: 768px) {
+  .container3 {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

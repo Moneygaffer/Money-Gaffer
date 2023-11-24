@@ -16,16 +16,17 @@ function Loan() {
   const [pendAmount, setPendAmount] = useState("");
 
   const session = JSON.parse(sessionStorage.getItem("user"));
+
+ 
   const userIdObj = session && session.Name === "_id" ? session : null;
   const userId = userIdObj ? userIdObj.Value : null;
-
   const handlesubmit = async (e) => {
     e.preventDefault();
     const recordId = uuid();
     try {
       const response = await axios.post(apiUrl, {
         crudtype: 1,
-        userId: userId,
+        userId: session[0].Value,
         recordid: recordId,
         collectionname: "loans",
         data: {
@@ -39,6 +40,10 @@ function Loan() {
           endDate: endDate,
           pendingAmount: pendAmount,
         },
+
+      },{
+        Authorization:session.token,
+
       });
       console.log(response);
       if (response.data.status === "PASS") {
@@ -153,6 +158,7 @@ function Loan() {
                   value={pendAmount}
                   onChange={(e) => setPendAmount(e.target.value)}
                 />
+                
               </div>
             </div>
           </form>

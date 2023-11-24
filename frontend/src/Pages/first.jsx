@@ -40,7 +40,7 @@ function First() {
               </Button>
             </Link>
             <div style={{ flexGrow: 1 }}></div>
-            <Link to="/Login" style={{ textDecoration: "none" }}>
+            <Link to="/login" style={{ textDecoration: "none" }}>
               <Button color="inherit" style={{ color: "white" }}>
                 Login
               </Button>
@@ -56,7 +56,7 @@ function First() {
 
       <Container style={{ textAlign: "center", paddingTop: "50px" }}>
         <Zoom in timeout={1000}>
-          <Typography variant="h3" gutterBottom>
+          <Typography variant="h3" color="white" gutterBottom>
             Your Financial Management Solution
           </Typography>
         </Zoom>
@@ -133,7 +133,7 @@ function First() {
       </Container>
 
       <Container style={{ textAlign: "center", marginTop: "50px" }}>
-        <Typography variant="body2" gutterBottom>
+        <Typography variant="body2" color="white" gutterBottom>
           &copy; {new Date().getFullYear()} Money Gaffer. All Rights Reserved.
         </Typography>
       </Container>

@@ -16,15 +16,18 @@ function AccountInfo() {
 
   const session = JSON.parse(sessionStorage.getItem("user"));
 
+  
+  const userIdObj = session && session.Name === "_id" ? session : null;
+  const userId = userIdObj ? userIdObj.Value : null;
+
+
   const handlesubmit = async (e) => {
     e.preventDefault();
     const recordId = uuid();
     try {
-      const userIdObj = session.find((item) => item.Name === "_id");
-      const userId = userIdObj ? userIdObj.Value : null;
       const response = await axios.post(apiUrl, {
         crudtype: 1,
-        userId: userId,
+        userId: session[0].Value,
         recordid: recordId,
         collectionname: "bankaccounts",
         data: {
@@ -36,6 +39,8 @@ function AccountInfo() {
           accountType: accountType,
           swiftCode: swiftCode,
         },
+      },{
+        Authorization:session.token,
       });
 
       console.log(response);

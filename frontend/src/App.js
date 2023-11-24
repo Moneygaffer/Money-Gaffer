@@ -25,7 +25,7 @@ import Tutorials from "./Pages/sidebar/Tutorials";
 import SideBarHome from "./components/SideBarHome";
 
 function App() {
-  const array = ["/", "register", "Login", "login"];
+  const array = ["/", "register", "login","Login"];
 
   return (
     <Router>
@@ -42,7 +42,7 @@ function App() {
       </Routes>
       {array.includes(window.location.pathname) ? (
         <></>
-      ) : window.location.pathname !== "login" ? (
+      ) : window.location.pathname !== "Login" ? (
         <SideBar>
           <Routes>
             {/* <Route path="/" element={<First />} />  */}
@@ -54,7 +54,7 @@ function App() {
             <Route path="/insurance" element={<InsuranceForm />} />
             <Route path="/loan" element={<Loan />} />
             {/* <Route path="/settings" element={<Setting />} /> */}
-            <Route path="/settings/profile" element={<ProfilePage />} />
+            <Route path="/settings/profile" element={<ProfilePage/>} />
             {/* <Route path="/dashboard" element={<Dashboard/>}/> */}
             <Route path="/tutorials" element={<Tutorials />}>
               {" "}
