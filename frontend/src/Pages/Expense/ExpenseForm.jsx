@@ -23,7 +23,7 @@ function FormTable({ addTransaction }) {
   const [editMode, setEditMode] = useState("");
   const [editRecordId, setEditRecordId] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(9);
-  const [expenseType, setExpenseType] = useState("");
+  const [transactionType, setTransactionType] = useState("");
 
   const session = JSON.parse(sessionStorage.getItem("user"));
   // const userIdObj=session.find((item)=>item.Name==="_id")
@@ -48,12 +48,13 @@ function FormTable({ addTransaction }) {
   };
   const generatePDF = () => {
     const doc = new jsPDF();
-    const tableColumn = ["Account ID", "Description", "Amount", "Date"];
+    const tableColumn = ["Expense Type","Account ID", "Description", "Amount", "Date"];
     const tableRows = [];
 
     flattenedData.forEach((item) => {
-      const { accountId, description, amount, dot } = item;
+      const { transactionType, accountId, description, amount, dot } = item;
       const rowData = [
+        transactionType,
         accountId,
         description,
         amount,
@@ -135,10 +136,11 @@ function FormTable({ addTransaction }) {
           recordid: editRecordId,
           collectionname: "expense",
           data: {
+            transactionType:transactionType,
             description: expenseTitle,
             accountId: bankid,
             amount: amount,
-            expenseType: expenseType,
+            transactionType: transactionType,
             bankName: bankName,
             dot: new Date(date).toISOString().split("T")[0],
           },
@@ -200,7 +202,7 @@ function FormTable({ addTransaction }) {
               description: expenseTitle,
               accountId: foundAccount.accountId,
               amount: amount,
-              expenseType: expenseType,
+              transactionType: transactionType,
               bankName: bankName,
               dot: new Date(date).toISOString().split("T")[0],
             },
@@ -221,7 +223,7 @@ function FormTable({ addTransaction }) {
     }
     setExpenseTitle("");
     setBankName("");
-    setExpenseType("");
+    setTransactionType("");
     setAddress("");
     setAmount("");
     setDate("");
@@ -284,8 +286,8 @@ function FormTable({ addTransaction }) {
           <div className={ExpenseCSS.form_group}>
             <label htmlFor="expenseTye">Expense Type</label>
             <select
-              value={expenseType}
-              onChange={(e) => setExpenseType(e.target.value)}
+              value={transactionType}
+              onChange={(e) => setTransactionType(e.target.value)}
             >
               <option value="">Select</option>
               <option value="Food">Food</option>
@@ -368,6 +370,7 @@ function FormTable({ addTransaction }) {
           <table>
             <thead>
               <tr>
+                <th>Exp Type</th>
                 <th>Expense Title</th>
                 <th>Savings Account</th>
                 <th>Bank Name</th>
@@ -381,6 +384,7 @@ function FormTable({ addTransaction }) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((detail, idx) => (
                   <tr key={idx} className="pagination-data">
+                    <td>{detail.transactionType}</td>
                     <td>{detail.description}</td>
                     <td>{detail.accountId}</td>
                     <td>{detail.bankName}</td>

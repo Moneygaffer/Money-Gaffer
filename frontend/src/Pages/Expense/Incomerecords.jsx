@@ -10,6 +10,7 @@ const Incomerecords = () => {
   const [accountDetails, setAccountDetails] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [transactionType,setTransactionType]=useState("");
   const [incomeTitle, setIncomeTitle] = useState("");
   const [filteredRecords, setFilteredRecords] = useState([]);
   const [rowPage, setRowPage] = useState(5);
@@ -45,7 +46,7 @@ const Incomerecords = () => {
   
     const generatePDF = () => {
       const doc = new jsPDF();
-      const tableColumn = ['Account ID', 'Description', 'Amount', 'Date'];
+      const tableColumn = [ 'Income Type','Account ID', 'Description', 'Amount', 'Date'];
       const tableRows = [];
     
       filteredRecords.forEach((item) => {
@@ -56,8 +57,8 @@ const Incomerecords = () => {
           const hasMatchingTitle = detail.description === incomeTitle;
     
           if (isWithinDateRange && (incomeTitle === '' || hasMatchingTitle)) {
-            const { accountId, description, amount, dot } = detail;
-            const rowData = [accountId, description, amount, new Date(dot).toLocaleDateString()];
+            const { transactionType,accountId, description, amount, dot } = detail;
+            const rowData = [transactionType,accountId, description, amount, new Date(dot).toLocaleDateString()];
             tableRows.push(rowData);
           }
         });
@@ -127,14 +128,16 @@ const Incomerecords = () => {
               />
             </div>
             <div className={IncomerecordCSS.form_group}>
-              <label htmlFor="incomeTitle">Income Title</label>
-              <input
-                type="text"
-                id="incomeTitle"
-                placeholder="Enter Income Title"
-                value={incomeTitle}
-                onChange={(e) => setIncomeTitle(e.target.value)}
-              />
+              <label htmlFor="incomeTitle">Income Type</label>
+              <select value={transactionType}
+              onChange={(e)=>setTransactionType(e.target.value)}>
+                <option value="">Select</option>
+                <option value="Rent">Rent</option>
+           <option value="Salary">Salary</option>
+           <option value="Interest">Interest</option>
+           <option value="Profit">Profit</option>
+           <option value="Others">Others</option>
+           </select>
             </div>
             <div className={IncomerecordCSS.form_group}>
               <button
@@ -161,6 +164,7 @@ const Incomerecords = () => {
             <table>
               <thead>
                 <tr>
+                  <th>Income Type</th>
                   <th>Income Title</th>
                   <th>Bank Account</th>
                   <th>Amount</th>
@@ -175,13 +179,14 @@ const Incomerecords = () => {
         const dotDate = new Date(detail.dot);
         const isWithinDateRange =
           dotDate >= new Date(startDate) && dotDate <= new Date(endDate);
-        const hasMatchingTitle = detail.description === incomeTitle;
+        const hasMatchingTitle = detail.transactionType === transactionType;
 
-        if (isWithinDateRange && (incomeTitle === '' || hasMatchingTitle)) {
+        if (isWithinDateRange && (transactionType === '' || hasMatchingTitle)) {
           sum = sum + parseInt(detail.amount);
 
           return (
             <tr key={idx}>
+              <td>{detail.transactionType}</td>
               <td>{detail.description}</td>
               <td>{detail.accountId}</td>
               <td>{detail.amount}</td>
@@ -200,7 +205,7 @@ const Incomerecords = () => {
       })
     )}
   <tr>
-    <td colSpan="2">Total:</td>
+    <td colSpan="3">Total:</td>
     <td>{sum}</td>
   </tr>
 </tbody>

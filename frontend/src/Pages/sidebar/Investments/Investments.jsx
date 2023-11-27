@@ -22,7 +22,7 @@ function Investments() {
     try {
       const response = await axios.post(apiUrl, {
         crudtype: 1,
-        userId: userId,
+        userId: session[0].Value,
         recordid: recordId,
         collectionname: "investments",
         data: {
@@ -95,7 +95,6 @@ function Investments() {
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                 ></input>
-
                 <label> End Date</label>
                 <input
                   type="date"

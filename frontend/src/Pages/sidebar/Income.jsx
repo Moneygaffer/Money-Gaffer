@@ -23,7 +23,7 @@ function FormTable({ addTransaction }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(9);
   const [editMode, setEditMode] = useState(false);
-  const [incomeType, setincomeType] = useState("");
+  const [transactionType, setTransactionType] = useState("");
   const [editRecordId, setEditRecordId] = useState(null);
   const session = JSON.parse(sessionStorage.getItem("user"));
 
@@ -50,12 +50,12 @@ function FormTable({ addTransaction }) {
   };
   const generatePDF = () => {
     const doc = new jsPDF();
-    const tableColumn = [ 'Account ID','Bank Name', 'Description', 'Amount', 'Date'];
+    const tableColumn = [ 'Transaction Type','Account ID','Bank Name', 'Description', 'Amount', 'Date'];
     const tableRows = [];
 
 flattenedData.forEach((item) => {
-  const {  accountId,bankName, description, amount, dot } = item;
-  const rowData = [ accountId, bankName,description, amount, new Date(dot).toLocaleDateString()];
+  const { transactionType, accountId,bankName, description, amount, dot } = item;
+  const rowData = [transactionType, accountId, bankName,description, amount, new Date(dot).toLocaleDateString()];
   tableRows.push(rowData);
 });
 
@@ -135,10 +135,10 @@ flattenedData.forEach((item) => {
           recordid: editRecordId,
           collectionname: "income",
           data: {
+            transactionType:transactionType,
             description: incomeTitle,
             accountId: bankid,
             amount: amount,
-            incomeType:incomeType,
             bankName:bankName,
             dot: new Date(date).toISOString().split("T")[0],
           },
@@ -200,7 +200,7 @@ flattenedData.forEach((item) => {
             collectionname: "income",
             data: {
               description: incomeTitle,
-              incomeType: incomeType,
+              transactionType: transactionType,
               accountId: foundAccount.accountId,
               bankName: bankName,
               amount: amount,
@@ -226,7 +226,7 @@ flattenedData.forEach((item) => {
     }
 
     setincomeTitle("");
-    setincomeType("");
+    setTransactionType("");
     setBankName("");
     setAddress("");
     setAmount("");
@@ -290,9 +290,9 @@ flattenedData.forEach((item) => {
             />
           </div>
           <div className={IncomeCSS.form_group}>
-            <label htmlFor="incomeType">Income Type</label>
-            <select value={incomeType}
-            onChange={(e)=>setincomeType(e.target.value)}>
+            <label htmlFor="transactionType">Income Type</label>
+            <select value={transactionType}
+            onChange={(e)=>setTransactionType(e.target.value)}>
 
            
            <option value="">Select</option>
@@ -376,8 +376,9 @@ flattenedData.forEach((item) => {
           <table>
             <thead>
               <tr>
+                <th>Income Type</th>
                 <th>Income Title</th>
-                <th>Savings Account</th>
+                <th>Account No</th>
                 <th>Bank Name</th>
                 <th>Amount</th>
                 <th>Date</th>
@@ -389,6 +390,7 @@ flattenedData.forEach((item) => {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((detail, idx) => (
                 <tr key={idx} className="pagination-data">
+                  <td className={IncomeCSS.td_1}>{detail.transactionType}</td>
                   <td className={IncomeCSS.td_1}>{detail.description}</td>
                   <td className={IncomeCSS.td_1}>{detail.accountId}</td>
                   <td className={IncomeCSS.td_1}>{detail.bankName}</td>

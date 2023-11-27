@@ -15,6 +15,7 @@ const Expenserecords = () => {
   const [expenseTitle, setExpenseTitle] = useState("");
   const [filteredRecords, setFilteredRecords] = useState([]);
   const [rowPage, setRowPage] = useState(5);
+  const [transactionType,setTransactionType]=useState("");
   let expensesum = 0;
 
   const parseData = (data) => {
@@ -37,7 +38,7 @@ const Expenserecords = () => {
   }, [filteredRecords]);
   const generatePDF = () => {
     const doc = new jsPDF();
-    const tableColumn = ['Account ID', 'Description', 'Amount', 'Date'];
+    const tableColumn = ['ExpenseType','Account ID', 'Description', 'Amount', 'Date'];
     const tableRows = [];
   
     filteredRecords.forEach((item) => {
@@ -45,11 +46,11 @@ const Expenserecords = () => {
         const dotDate = new Date(detail.dot);
         const isWithinDateRange =
           dotDate >= new Date(startDate) && dotDate <= new Date(endDate);
-        const hasMatchingTitle = detail.description === expenseTitle;
+        const hasMatchingTitle = detail.transactionType === transactionType;
   
-        if (isWithinDateRange && (expenseTitle === '' || hasMatchingTitle)) {
-          const { accountId, description, amount, dot } = detail;
-          const rowData = [accountId, description, amount, new Date(dot).toLocaleDateString()];
+        if (isWithinDateRange && (transactionType === '' || hasMatchingTitle)) {
+          const {transactionType, accountId, description, amount, dot } = detail;
+          const rowData = [transactionType,accountId, description, amount, new Date(dot).toLocaleDateString()];
           tableRows.push(rowData);
         }
       });
@@ -120,14 +121,17 @@ const Expenserecords = () => {
               />
             </div>
             <div className={ExpenserecordCSS.form_group}>
-              <label htmlFor="expenseTitle">Expense Title</label>
-              <input
-                type="text"
-                id="expenseTitle"
-                placeholder="Enter Expense Title"
-                value={expenseTitle}
-                onChange={(e) => setExpenseTitle(e.target.value)}
-              />
+              <label htmlFor="transactionType">Expense Type</label>
+              <select value={transactionType}
+              onClick={(e)=>setTransactionType(e.target.value)}
+              >
+              <option value="">Select</option>
+              <option value="Food">Food</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="DailyExpense">DailyExpense</option>
+              <option value="Others">Others</option>
+            </select>
             </div>
             <div className={ExpenserecordCSS.form_group}>
               <button
@@ -152,6 +156,7 @@ const Expenserecords = () => {
             <table>
               <thead>
                 <tr>
+                  <th>Exp Type</th>
                   <th>Expense Title</th>
                   <th>Bank Account</th>
                   <th>Amount</th>
@@ -165,13 +170,14 @@ const Expenserecords = () => {
         const dotDate = new Date(detail.dot);
         const isWithinDateRange =
           dotDate >= new Date(startDate) && dotDate <= new Date(endDate);
-        const hasMatchingTitle = detail.description === expenseTitle;
+        const hasMatchingTitle = detail.transactionType === transactionType;
 
-        if (isWithinDateRange && (expenseTitle === '' || hasMatchingTitle)) {
+        if (isWithinDateRange && (transactionType === '' || hasMatchingTitle)) {
           expensesum = expensesum + parseInt(detail.amount);
 
           return (
             <tr key={idx}>
+              <td>{detail.transactionType}</td>
               <td>{detail.description}</td>
               <td>{detail.accountId}</td>
               <td>{detail.amount}</td>
