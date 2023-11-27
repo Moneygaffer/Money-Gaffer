@@ -17,13 +17,13 @@ function First1() {
         background: "linear-gradient(135deg, rgb(0, 7, 61), #2196f3)",
         minHeight: "100vh",
         color: "white",
-        minWidth: "100vw",
+        minWidth: "100vw"
       }}
     >
       <Slide in direction="down" timeout={1000}>
         <Container style={{ paddingTop: "50px", textAlign: "center" }}>
           <Zoom in timeout={1000}>
-            <Typography variant="h3" gutterBottom>
+            <Typography variant="h3" gutterBottom color={"white"}>
               How Money Gaffer Works
             </Typography>
           </Zoom>
@@ -138,7 +138,7 @@ function First1() {
 
       <Slide in direction="up" timeout={1000}>
         <Container style={{ textAlign: "center", marginTop: "50px" }}>
-          <Typography variant="body2">
+          <Typography variant="body2" color={"white"}>
             Money Gaffer provides a comprehensive solution for all your personal
             finance needs, empowering you to take control of your financial
             future.
@@ -148,10 +148,10 @@ function First1() {
 
       <Slide in direction="up" timeout={1500}>
         <Container style={{ textAlign: "center", marginTop: "50px" }}>
-          <Typography variant="h4" gutterBottom>
+          <Typography variant="h4" gutterBottom color={"white"}>
             Ready to get started?
           </Typography>
-          <Typography variant="body2">
+          <Typography variant="body2" color={"white"}>
             Join us today and begin your journey towards financial success.
           </Typography>
         </Container>

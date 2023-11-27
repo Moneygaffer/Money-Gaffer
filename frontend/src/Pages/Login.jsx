@@ -31,11 +31,9 @@ function Login() {
 
         sessionStorage.setItem(
           "user",
-
           JSON.stringify(temp3)
         );
         axios.defaults.headers.common["Authorization"] = `Bearer ${temp1}`;
-
         navigate("/dashboard");
       } else {
         console.log("Invalid credentials");

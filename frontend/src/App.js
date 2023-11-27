@@ -3,12 +3,10 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useLocation,
 } from "react-router-dom";
 import Login from "./Pages/Login";
 import Income from "./Pages/sidebar/Income";
 import Records from "./Pages/sidebar/Records";
-import SideBar from "./components/Sidebar/SideBar";
 import ExpenseForm from "./Pages/Expense/ExpenseForm";
 import Expenserecords from "./Pages/Expense/Expenserecords";
 import Incomerecords from "./Pages/Expense/Incomerecords";
@@ -23,6 +21,7 @@ import Loan from "./Pages/sidebar/Loan/Loan";
 import InsuranceForm from "./Pages/sidebar/Insurance/InsuranceForm";
 import Tutorials from "./Pages/sidebar/Tutorials";
 import SideBarHome from "./components/SideBarHome";
+import Layout from "./components/Layout";
 
 function App() {
   const array = ["/", "register", "login","Login"];
@@ -30,45 +29,28 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/howitworks" element={<First1 />}></Route>
-        <Route path="/blog" element={<Blog />}></Route>
-      </Routes>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/register" element={<Signup />}/>
 
-      <Routes>
-        {/* {console.log(window.location.pathname)} */}
-        <Route path="/" element={<First />} />
-        <Route path="/register" element={<Signup />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-      </Routes>
-      {array.includes(window.location.pathname) ? (
-        <></>
-      ) : window.location.pathname !== "Login" ? (
-        <SideBar>
-          <Routes>
-            {/* <Route path="/" element={<First />} />  */}
-            <Route path="/dashboard" element={<SideBarHome />} />
-            <Route path="/income" element={<Income />} />
-            <Route path="/AccountInfo" element={<AccountInfo />} />
-            <Route path="/messages" element={<ExpenseForm />} />
-            <Route path="/investments" element={<Investments />} />
-            <Route path="/insurance" element={<InsuranceForm />} />
-            <Route path="/loan" element={<Loan />} />
-            {/* <Route path="/settings" element={<Setting />} /> */}
-            <Route path="/settings/profile" element={<ProfilePage/>} />
-            {/* <Route path="/dashboard" element={<Dashboard/>}/> */}
-            <Route path="/tutorials" element={<Tutorials />}>
-              {" "}
+            
+            <Route element={<Layout />}>
+              <Route path="/howitworks" element={<First1 />}></Route>
+              <Route path="/blog" element={<Blog />}></Route>
+              <Route path="/dashboard" element={<SideBarHome />} />
+              <Route path="/income" element={<Income />} />
+              <Route path="/AccountInfo" element={<AccountInfo />} />
+              <Route path="/messages" element={<ExpenseForm />} />
+              <Route path="/investments" element={<Investments />} />
+              <Route path="/insurance" element={<InsuranceForm />} />
+              <Route path="/loan" element={<Loan />} />
+              <Route path="/settings/profile" element={<ProfilePage/>} />
+              <Route path="/tutorials" element={<Tutorials />}/>
+              <Route path="/Records" element={<Records />}/>
+              <Route path="/Expenserecords" element={<Expenserecords />} />
+              <Route path="/Incomerecords" element={<Incomerecords />} />
             </Route>
-
-            <Route path="/Records" element={<Records />}>
-              {" "}
-            </Route>
-            {/* <Route path="/Dashboard" element={<Dashboard/>} /> */}
-            <Route path="/Expenserecords" element={<Expenserecords />} />
-            <Route path="/Incomerecords" element={<Incomerecords />} />
+            <Route path="*" element={<First/>}/>
           </Routes>
-        </SideBar>
-      ) : null}
     </Router>
   );
 }

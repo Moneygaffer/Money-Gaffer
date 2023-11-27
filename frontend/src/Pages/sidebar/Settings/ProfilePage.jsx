@@ -15,9 +15,9 @@ function ProfilePage() {
   const role =
     session && session[3] && session[3].Value ? session[3].Value : null;
  // const token = session && session.token ? session.token : null;
-  console.log(username);
-  console.log(email);
-  console.log(role);
+  // console.log(username);
+  // console.log(email);
+  // console.log(role);
  const [newPassword,setNewPassword]=useState("");
  const [confirmNewPassword,setConfirmNewPassword]=useState("");
  const [passwordChangeError,setPasswordChangeError]=useState(null);
@@ -32,13 +32,24 @@ function ProfilePage() {
     const response=await axios.post(apiUrl,{
       crudType:3,
       userId:session[0].Value,
+      recordid:null,
       collectionname:"irwbusers",
-      newPassword:newPassword,
-    },{
+      data:{
+        username: username,
+        email: email,
+        password: newPassword,
+
+      }
+    }
+    ,{
       Authorization:session.token,
     })
+    console.log("name:",username)
+    console.log("email",email)
+    console.log("API Response:",response)
     console.log("New Password:",newPassword)
     if(response.data.status=="PASS"){
+      console.log("Password updated successfully")
       setPasswordChangeError(null);
     }
     else{

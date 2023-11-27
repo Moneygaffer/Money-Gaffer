@@ -6,10 +6,8 @@ import { v4 as uuid } from "uuid";
 import { Link } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import 'jspdf-autotable'
-import jsPDF from 'jspdf';
-
-
+import "jspdf-autotable";
+import jsPDF from "jspdf";
 
 const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
 
@@ -25,7 +23,7 @@ function FormTable({ addTransaction }) {
   const [editMode, setEditMode] = useState("");
   const [editRecordId, setEditRecordId] = useState("");
   const [rowsPerPage, setRowsPerPage] = useState(9);
-  const [expenseType,setExpenseType]=useState("")
+  const [expenseType, setExpenseType] = useState("");
 
   const session = JSON.parse(sessionStorage.getItem("user"));
   // const userIdObj=session.find((item)=>item.Name==="_id")
@@ -50,23 +48,27 @@ function FormTable({ addTransaction }) {
   };
   const generatePDF = () => {
     const doc = new jsPDF();
-    const tableColumn = [ 'Account ID', 'Description', 'Amount', 'Date'];
+    const tableColumn = ["Account ID", "Description", "Amount", "Date"];
     const tableRows = [];
 
-flattenedData.forEach((item) => {
-  const {  accountId, description, amount, dot } = item;
-  const rowData = [ accountId, description, amount, new Date(dot).toLocaleDateString()];
-  tableRows.push(rowData);
-});
-
+    flattenedData.forEach((item) => {
+      const { accountId, description, amount, dot } = item;
+      const rowData = [
+        accountId,
+        description,
+        amount,
+        new Date(dot).toLocaleDateString(),
+      ];
+      tableRows.push(rowData);
+    });
 
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
     });
 
-    doc.save('accountDetails.pdf');
-  }
+    doc.save("accountDetails.pdf");
+  };
   const fetchExpenseData = async () => {
     try {
       const { data } = await axios.post(
@@ -136,8 +138,8 @@ flattenedData.forEach((item) => {
             description: expenseTitle,
             accountId: bankid,
             amount: amount,
-            expenseType:expenseType,
-            bankName:bankName,
+            expenseType: expenseType,
+            bankName: bankName,
             dot: new Date(date).toISOString().split("T")[0],
           },
         });
@@ -198,8 +200,8 @@ flattenedData.forEach((item) => {
               description: expenseTitle,
               accountId: foundAccount.accountId,
               amount: amount,
-              expenseType:expenseType,
-              bankName:bankName,
+              expenseType: expenseType,
+              bankName: bankName,
               dot: new Date(date).toISOString().split("T")[0],
             },
           },
@@ -281,13 +283,17 @@ flattenedData.forEach((item) => {
           </div>
           <div className={ExpenseCSS.form_group}>
             <label htmlFor="expenseTye">Expense Type</label>
-            <input
-              type="text"
-              id="expenseType"
-              placeholder="Enter Expense Type"
+            <select
               value={expenseType}
               onChange={(e) => setExpenseType(e.target.value)}
-            />
+            >
+              <option value="">Select</option>
+              <option value="Food">Food</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="DailyExpense">DailyExpense</option>
+              <option value="Others">Others</option>
+            </select>
           </div>
 
           <div className={ExpenseCSS.form_group}>
@@ -355,8 +361,9 @@ flattenedData.forEach((item) => {
             <Link to="/Expenserecords" className={ExpenseCSS.btn_2}>
               Expense Records
             </Link>
-            <button onClick={generatePDF}  className={ExpenseCSS.pdfbutton}>Export to PDF</button>
-
+            <button onClick={generatePDF} className={ExpenseCSS.pdfbutton}>
+              Export to PDF
+            </button>
           </h2>
           <table>
             <thead>
@@ -370,35 +377,33 @@ flattenedData.forEach((item) => {
               </tr>
             </thead>
             <tbody>
-            {flattenedData
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((detail, idx) => (
-                      <tr key={idx} className="pagination-data">
-                        <td>{detail.description}</td>
-                        <td>{detail.accountId}</td>
-                        <td>{detail.bankName}</td>
-                        <td>{detail.amount}</td>
-                        <td className={ExpenseCSS.td_1}>
-              {new Date(detail.dot).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-              })}
-            </td>
-                        <td>
-                          <EditIcon
-                            onClick={() => handleEdit(detail.recordId)}
-                            className={ExpenseCSS.editIcon}
-                          />
-                          <DeleteIcon
-                            onClick={() => handleDelete(detail.recordId)}
-                            className={ExpenseCSS.deleteIcon}
-
-                          />
-                        </td>
-                      </tr>
-                    ))
-              }
+              {flattenedData
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((detail, idx) => (
+                  <tr key={idx} className="pagination-data">
+                    <td>{detail.description}</td>
+                    <td>{detail.accountId}</td>
+                    <td>{detail.bankName}</td>
+                    <td>{detail.amount}</td>
+                    <td className={ExpenseCSS.td_1}>
+                      {new Date(detail.dot).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
+                    </td>
+                    <td>
+                      <EditIcon
+                        onClick={() => handleEdit(detail.recordId)}
+                        className={ExpenseCSS.editIcon}
+                      />
+                      <DeleteIcon
+                        onClick={() => handleDelete(detail.recordId)}
+                        className={ExpenseCSS.deleteIcon}
+                      />
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
           <TablePagination

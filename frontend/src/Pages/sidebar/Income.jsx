@@ -291,13 +291,17 @@ flattenedData.forEach((item) => {
           </div>
           <div className={IncomeCSS.form_group}>
             <label htmlFor="incomeType">Income Type</label>
-            <input
-              type="text"
-              id="incomeType"
-              placeholder="Enter Income Type"
-              value={incomeType}
-              onChange={(e) => setincomeType(e.target.value)}
-            />
+            <select value={incomeType}
+            onChange={(e)=>setincomeType(e.target.value)}>
+
+           
+           <option value="">Select</option>
+           <option value="Rent">Rent</option>
+           <option value="Salary">Salary</option>
+           <option value="Interest">Interest</option>
+           <option value="Profit">Profit</option>
+           <option value="Others">Others</option>
+           </select>
           </div>
           <div className={IncomeCSS.form_group}>
             <label>Select Bank Name</label>
