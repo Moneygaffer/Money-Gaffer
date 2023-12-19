@@ -1,25 +1,15 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import TutorialsCSS from "./Tutorials.module.css";
-import { useState, useEffect } from "react";
 import axios from "axios";
 
-const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
-function Tutorials() {
-  const item = {
-    "Term Insurance": "Term Insurance",
-    "Motor Insurance": "Motor Insurance",
-    "Health Insurance": "Health Insurance",
-    "Critical Insurance": "Critical Insurance",
-    "Whole Life Insurance": "Whole Life Insurance",
-    "Group Life Insurance": "Group Life Insurance",
-    "Property Insurance": "Property Insurance",
-    "Unit Linked Insurance": "Unit Linked Insurance",
-    "Child Plan Insurance": "Child Plan Insurance",
-  };
+const apiUrl = "https://pfmservices.azurewebsites.net/api/CRUD_irwb?";
 
+function Tutorials() {
   const [data, setData] = useState([]);
   const [activeSection, setActiveSection] = useState("insurance");
-  const [activeDescription, setActiveDiscription] = useState("");
+  const [activeDescription, setActiveDescription] = useState("");
+  const [fileInfo, setFileInfo] = useState([]);
+
   const fetchData = async () => {
     try {
       const response = await axios.post(apiUrl, {
@@ -31,7 +21,24 @@ function Tutorials() {
         response.data.data.replace(/ObjectId\("(\w+)"\)/g, '"$1"')
       );
       setData(temp);
-      console.log(data);
+    } catch (error) {
+      console.error("API Error:", error);
+    }
+  };
+
+  const fetchFileData = async () => {
+    try {
+      const response = await axios.post(apiUrl, {
+        crudtype: 2,
+        recordid: null,
+        collectionname: "fs.files",
+      });
+      let temp = JSON.parse(
+        response.data.data.replace(/ObjectId\("(\w+)"\)/g, '"$1"')
+      );
+      setFileInfo(temp);
+      console.log("videos :",temp);
+      console.log("video response:",response)
     } catch (error) {
       console.error("API Error:", error);
     }
@@ -39,7 +46,10 @@ function Tutorials() {
 
   useEffect(() => {
     fetchData();
+    fetchFileData();
   }, []);
+  
+  
 
   const filteredData = data.filter((item) => {
     if (activeSection === "insurance") {
@@ -49,6 +59,12 @@ function Tutorials() {
     }
     return false;
   });
+
+  const handleButtonClick = async () => {
+    // Fetch file data when the button is clicked
+    await fetchFileData();
+  };
+
   return (
     <div className={TutorialsCSS.tutorial_container}>
       <div className={TutorialsCSS.tutorial_button}>
@@ -72,8 +88,15 @@ function Tutorials() {
             <h2>{item.topic}</h2>
             {item.details.map((detail, i) => (
               <div key={i} className={TutorialsCSS.card_topic}>
+                <button
+                  className={TutorialsCSS.video}
+                  onClick={handleButtonClick}
+                >
+                  Click Here
+                </button>
+
                 <h3
-                  onClick={() => setActiveDiscription(detail.topic)}
+                  onClick={() => setActiveDescription(detail.topic)}
                   className={TutorialsCSS.card_topic_button}
                 >
                   {detail.topic}
@@ -84,6 +107,14 @@ function Tutorials() {
                     {detail.description}
                   </p>
                 )}
+
+                {/* Display file information
+                {fileInfo && (
+                  <div className={TutorialsCSS.file_info}>
+                    <p>File Information:</p>
+                    <pre>{JSON.stringify(fileInfo, null, 2)}</pre>
+                  </div>
+                )} */}
               </div>
             ))}
           </div>

@@ -1,0 +1,73 @@
+/* InsuranceForm.css */
+
+.ins_form {
+    background-color: #fff;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 2%;
+  }
+  
+  .form_heading {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  
+  .form_fields {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .form_field {
+    flex: 0 0 calc(40% - 10px);
+    margin-bottom: 1px;
+    margin-left: 100px;
+  }
+  
+  .form_label {
+    font-size: 16px;
+    margin-bottom: 8px;
+    display: block;
+    font-style: italic;
+  }
+  
+  .form_input[type="text"]{
+    width: 80%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 5px;
+  }
+  .form_input1[type="text"]{
+    max-width: 25%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 5px;
+    
+  }
+  .main_div{
+    max-height:50px;
+  }
+  .ins_prevbtn{
+    height: fit-content;
+    margin-left: 100px;
+  }
+  .ins_nextbtn{
+    height: fit-content;
+    margin-left: 50px;
+
+
+  }
+  .ins_cursld{
+    margin-left: 40px;
+  }
+  .ins_savebtn{
+    height: fit-content;
+    margin-left: 40px;
+  }

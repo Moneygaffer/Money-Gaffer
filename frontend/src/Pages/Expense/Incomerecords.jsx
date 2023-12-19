@@ -4,14 +4,13 @@ import IncomerecordCSS from "./Incomerecords.module.css";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
-const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
+const apiUrl = "https://pfmservices.azurewebsites.net/api/CRUD_irwb?";
 
 const Incomerecords = () => {
   const [accountDetails, setAccountDetails] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [transactionType,setTransactionType]=useState("");
-  const [incomeTitle, setIncomeTitle] = useState("");
   const [filteredRecords, setFilteredRecords] = useState([]);
   const [rowPage, setRowPage] = useState(5);
   const session = JSON.parse(sessionStorage.getItem("user"));
@@ -49,20 +48,28 @@ const Incomerecords = () => {
       const tableColumn = [ 'Income Type','Account ID', 'Description', 'Amount', 'Date'];
       const tableRows = [];
     
-      filteredRecords.forEach((item) => {
-        item.accountDetails.forEach((detail) => {
-          const dotDate = new Date(detail.dot);
-          const isWithinDateRange =
-            dotDate >= new Date(startDate) && dotDate <= new Date(endDate);
-          const hasMatchingTitle = detail.description === incomeTitle;
-    
-          if (isWithinDateRange && (incomeTitle === '' || hasMatchingTitle)) {
-            const { transactionType,accountId, description, amount, dot } = detail;
-            const rowData = [transactionType,accountId, description, amount, new Date(dot).toLocaleDateString()];
-            tableRows.push(rowData);
-          }
-        });
-      });
+      {filteredRecords &&
+        filteredRecords.map((item, index) =>
+          item.accountDetails.map((detail, idx) => {
+            const dotDate = new Date(detail.dot);
+            const isWithinDateRange =
+              dotDate >= new Date(startDate) && dotDate <= new Date(endDate);
+            const hasMatchingTitle = detail.transactionType === transactionType;
+      
+            if (isWithinDateRange && (transactionType === '' || hasMatchingTitle)) {
+              const { transactionType, accountId, description, amount, dot } = detail;
+              const rowData = [
+                transactionType,
+                accountId,
+                description,
+                amount,
+                new Date(dot).toLocaleDateString(),
+              ];
+              tableRows.push(rowData);
+            }
+          })
+        )}
+      
     
       doc.autoTable({
         head: [tableColumn],
@@ -128,7 +135,7 @@ const Incomerecords = () => {
               />
             </div>
             <div className={IncomerecordCSS.form_group}>
-              <label htmlFor="incomeTitle">Income Type</label>
+              <label htmlFor="transactionType">Income Type</label>
               <select value={transactionType}
               onChange={(e)=>setTransactionType(e.target.value)}>
                 <option value="">Select</option>

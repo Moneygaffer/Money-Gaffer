@@ -9,7 +9,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import "jspdf-autotable";
 import jsPDF from "jspdf";
 
-const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
+const apiUrl = "https://pfmservices.azurewebsites.net/api/CRUD_irwb?";
 
 function FormTable({ addTransaction }) {
   const [data, setData] = useState([]);
@@ -22,18 +22,19 @@ function FormTable({ addTransaction }) {
   const [address, setAddress] = useState("");
   const [editMode, setEditMode] = useState("");
   const [editRecordId, setEditRecordId] = useState("");
-  const [rowsPerPage, setRowsPerPage] = useState(9);
+  const [rowsPerPage, setRowsPerPage] = useState(7);
   const [transactionType, setTransactionType] = useState("");
+  const [expTypeFilter, setExpTypeFilter] = useState("");
+  const [expTitleFilter, setExpTitleFilter] = useState("");
+  const [accountNoFilter, setAccountNoFilter] = useState("");
+  const [bankNameFilter, setBankNameFilter] = useState("");
+  const [amountFilter, setAmountFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
 
   const session = JSON.parse(sessionStorage.getItem("user"));
-  // const userIdObj=session.find((item)=>item.Name==="_id")
-  // const userId=userIdObj?userIdObj.Value:null;
   const userIdObj = session && session.Name === "_id" ? session : null;
   const userId = userIdObj ? userIdObj.Value : null;
 
-  // const moreinfo = () => {
-  //   setRowPage(rowPage + 2);
-  // };
   const parseData = (data) => {
     const modifiedData = data
       .replaceAll("ISODate(", "")
@@ -46,6 +47,7 @@ function FormTable({ addTransaction }) {
       return [];
     }
   };
+
   const generatePDF = () => {
     const doc = new jsPDF();
     const tableColumn = ["Expense Type","Account ID", "Description", "Amount", "Date"];
@@ -70,6 +72,7 @@ function FormTable({ addTransaction }) {
 
     doc.save("accountDetails.pdf");
   };
+
   const fetchExpenseData = async () => {
     try {
       const { data } = await axios.post(
@@ -86,12 +89,13 @@ function FormTable({ addTransaction }) {
       );
       console.log("fetched Data:", data);
       const temp = parseData(data.data);
-      console.log("The details from databse:", temp);
+      console.log("The details from database:", temp);
       setData(temp);
     } catch (error) {
       console.log("API Error:", error);
     }
   };
+
   useEffect(() => {
     fetchExpenseData();
   }, [userId]);
@@ -107,17 +111,21 @@ function FormTable({ addTransaction }) {
       }
       return acc;
     }, null);
+    setTransactionType(editRecord.transactionType);
     setExpenseTitle(editRecord.description);
+    setBankId(editRecord.accountId);
     setBankName(editRecord.bankName);
     setAddress(editRecord.address);
     setAmount(editRecord.amount);
     setDate(editRecord.dot);
-    //setData(editRecord)
     setEditMode(true);
     setEditRecordId(editRecord.recordId);
   };
+
   const handleCancelEdit = () => {
+    setTransactionType("");
     setExpenseTitle("");
+    setBankId("");
     setBankName("");
     setAddress("");
     setAmount("");
@@ -228,6 +236,7 @@ function FormTable({ addTransaction }) {
     setAmount("");
     setDate("");
   };
+
   const handleDelete = async (recordId) => {
     try {
       console.log("Deleting with recordId:", recordId);
@@ -266,7 +275,19 @@ function FormTable({ addTransaction }) {
       console.log("API Error:", error);
     }
   };
+
   const flattenedData = data.flatMap((item) => item.accountDetails);
+
+  const filteredData = flattenedData.filter((detail) => {
+    const expTypeMatch = expTypeFilter === "" || detail.transactionType === expTypeFilter;
+    const expTitleMatch = expTitleFilter === "" || detail.description.includes(expTitleFilter);
+    const accountNoMatch = accountNoFilter === "" || detail.accountId.includes(accountNoFilter);
+    const bankNameMatch = bankNameFilter === "" || detail.bankName.includes(bankNameFilter);
+    const amountMatch = amountFilter === "" || detail.amount.toString().includes(amountFilter);
+    const dateMatch =dateFilter === "" || new Date(detail.dot).toISOString().split("T")[0] === dateFilter;
+  
+    return expTypeMatch && expTitleMatch && accountNoMatch && bankNameMatch && amountMatch && dateMatch;
+  });
 
   return (
     <div className={ExpenseCSS.page_container}>
@@ -367,12 +388,75 @@ function FormTable({ addTransaction }) {
               Export to PDF
             </button>
           </h2>
+          <div className={ExpenseCSS.custom_filters}>
+  <div className={`${ExpenseCSS.form_group} ${ExpenseCSS.inline_filter}`}>
+    {/* <label>Exp Type Filter</label> */}
+    <select className={ExpenseCSS.select_filter}
+      value={expTypeFilter}
+      onChange={(e) => setExpTypeFilter(e.target.value)}
+    >
+      <option value="">All</option>
+      <option value="Food">Food</option>
+      <option value="Shopping">Shopping</option>
+      <option value="Entertainment">Entertainment</option>
+      <option value="DailyExpense">DailyExpense</option>
+      <option value="Others">Others</option>
+    </select>
+  </div>
+
+  <div className={`${ExpenseCSS.form_group} ${ExpenseCSS.inline_filter}`}>
+    {/* <label>Exp Title Filter</label> */}
+    <input 
+      type="text"
+      placeholder="ExpTitle"
+      value={expTitleFilter}
+      onChange={(e) => setExpTitleFilter(e.target.value)}
+    />
+  </div>
+  
+  <div className={`${ExpenseCSS.form_group} ${ExpenseCSS.inline_filter}`}>
+    {/* <label>Acc No Filter</label> */}
+    <input 
+      type="text"
+      placeholder="Acc No"
+      value={accountNoFilter}
+      onChange={(e) => setAccountNoFilter(e.target.value)}
+    />
+  </div>
+  <div className={`${ExpenseCSS.form_group} ${ExpenseCSS.inline_filter}`}>
+    {/* <label>Bank Name Filter</label> */}
+    <input 
+      type="text"
+      placeholder="BankName"
+      value={bankNameFilter}
+      onChange={(e) => setBankNameFilter(e.target.value)}
+    />
+  </div>
+  <div className={`${ExpenseCSS.form_group} ${ExpenseCSS.inline_filter}`}>
+    {/* <label>Amt Filter</label> */}
+    <input 
+      type="text"
+      placeholder="Amt"
+      value={amountFilter}
+      onChange={(e) => setAmountFilter(e.target.value)}
+    />
+  </div>
+  <div className={`${ExpenseCSS.form_group} ${ExpenseCSS.inline_filter}`}>
+    {/* <label>Date Filter</label> */}
+    <input 
+      type="date"
+      value={dateFilter}
+      onChange={(e) => setDateFilter(e.target.value)}
+    />
+  </div>
+</div>
+
           <table>
             <thead>
               <tr>
                 <th>Exp Type</th>
-                <th>Expense Title</th>
-                <th>Savings Account</th>
+                <th>Exp Title</th>
+                <th>Account No</th>
                 <th>Bank Name</th>
                 <th>Amount</th>
                 <th>Date</th>
@@ -380,7 +464,7 @@ function FormTable({ addTransaction }) {
               </tr>
             </thead>
             <tbody>
-              {flattenedData
+              {filteredData
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((detail, idx) => (
                   <tr key={idx} className="pagination-data">
@@ -420,7 +504,7 @@ function FormTable({ addTransaction }) {
               setRowsPerPage(parseInt(event.target.value, 10));
               setPage(0);
             }}
-            rowsPerPageOptions={[4, 6, 8, 9]}
+            rowsPerPageOptions={[4, 6, 7,8, 9]}
           />
         </div>
       </div>

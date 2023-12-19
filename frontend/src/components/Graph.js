@@ -2,15 +2,43 @@ import React, { useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
 import graphCSS from "./Graph.module.css";
-const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
+
+const apiUrl = "https://pfmservices.azurewebsites.net/api/CRUD_irwb?";
 
 const Graph = () => {
   const [incomeTypeData, setIncomeTypeData] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("Income");
-  const [show, setShow] = useState(true);
   const [data, setData] = useState([]);
-  const session = JSON.parse(sessionStorage.getItem("user"));
 
+  const [categoryData, setCategoryData] = useState({
+    Income: [],
+    Expense: [],
+  });
+
+  const [incomeChartOptions, setIncomeChartOptions] = useState({
+    chart: {
+      type: "donut",
+      height: 380,
+      title: {
+        text: "Income Status",
+      },
+    },
+    // Other income chart options...
+    labels: [],
+  });
+
+  const [expenseChartOptions, setExpenseChartOptions] = useState({
+    chart: {
+      type: "donut",
+      height: 380,
+      title: {
+        text: "Income Status",
+      },
+    },
+    // Other expense chart options...
+    labels: [],
+  });
+
+  const session = JSON.parse(sessionStorage.getItem("user"));
   const userIdObj = session && session.Name === "_id" ? session : null;
   const userId = userIdObj ? userIdObj.Value : null;
 
@@ -27,6 +55,7 @@ const Graph = () => {
       return [];
     }
   };
+
   const fetchIncomeData = async () => {
     try {
       const { data } = await axios.post(
@@ -41,117 +70,145 @@ const Graph = () => {
           Authorization: session.token,
         }
       );
+
       const temp = parseData(data.data);
 
       if (temp && temp[0].accountDetails && temp[0].accountDetails.length > 0) {
-        console.log("Extracting incomeType and amount data...");
-
-        // Extract incomeType and amount data and store it in incomeTypeData state
         const incomeDetails = temp[0].accountDetails.map((detail) => ({
-          incomeType: detail.incomeType,
-          amount: detail.amount,
+          transactType: detail.transactionType,
+          amount: parseInt(detail.amount, 10),
         }));
 
-        console.log("Income details:", incomeDetails);
-
         setIncomeTypeData(incomeDetails);
+
+        // Grouping data by transactType and summing up amounts
+        const groupedIncomeDetails = incomeDetails.reduce((result, detail) => {
+          const { transactType, amount } = detail;
+          if (result[transactType]) {
+            result[transactType] += amount;
+          } else {
+            result[transactType] = amount;
+          }
+          return result;
+        }, {});
+
+        // Update categoryData state
+        setCategoryData({
+          ...categoryData,
+          Income: Object.keys(groupedIncomeDetails).map((transactType) => ({
+            name: transactType,
+            data: [groupedIncomeDetails[transactType]],
+          })),
+        });
       }
 
       setData(temp);
-
       console.log("Fetch completed successfully!");
     } catch (error) {
       console.error("API Error:", error);
     }
   };
 
+  const fetchExpenseData = async () => {
+    try {
+      const { data } = await axios.post(
+        apiUrl,
+        {
+          crudtype: 2,
+          recordid: null,
+          collectionname: "expense",
+          userId: session[0].Value,
+        },
+        {
+          Authorization: session.token,
+        }
+      );
+
+      const temp = parseData(data.data);
+      console.log("hi...:", temp);
+
+      if (temp && temp[0].accountDetails && temp[0].accountDetails.length > 0) {
+        const expenseDetails = temp[0].accountDetails.map((detail) => ({
+          transactType: detail.transactionType,
+          amount: parseInt(detail.amount, 10),
+        }));
+
+        // Grouping data by transactType and summing up amounts
+        const groupedExpenseDetails = expenseDetails.reduce(
+          (result, detail) => {
+            const { transactType, amount } = detail;
+            if (result[transactType]) {
+              result[transactType] += amount;
+            } else {
+              result[transactType] = amount;
+            }
+            return result;
+          },
+          {}
+        );
+
+        // Update the correct state
+        setCategoryData({
+          ...categoryData,
+          Expense: Object.keys(groupedExpenseDetails).map((transactType) => ({
+            name: transactType,
+            data: [groupedExpenseDetails[transactType]],
+          })),
+        });
+
+        setData(temp);
+        console.log("Fetch completed successfully for Expense!");
+      }
+    } catch (error) {
+      console.error("API Error:", error);
+    }
+  };
+
   useEffect(() => {
-    fetchIncomeData();
-  }, [userId]);
+    const fetchData = async () => {
+      await fetchIncomeData();
+      await fetchExpenseData();
+    };
 
-  const categoryData = {
-    Income: [44, 55, 41, 17, 15],
-    Expense: [30, 40, 35, 10, 25],
-    Savings: [20, 30, 25, 5, 15],
-    Loans: [10, 15, 5, 2, 8],
-  };
+    fetchData();
+  }, [userId, categoryData]);
 
-  const options = {
-    chart: {
-      width: 380,
-      type: "donut",
-    },
-    plotOptions: {
-      pie: {
-        startAngle: -90,
-        endAngle: 270,
-        donut: {
-          labels: {
-            show: true,
-            name: {
-              show: false,
-            },
-            value: {
-              show: false,
-            },
-            total: {
-              show: true,
-              label: "Total",
-              color: "#000000",
-              fontSize: "18px",
-              fontFamily: "Arial, sans-serif",
-              offsetY: 0,
-            },
-          },
-        },
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    fill: {
-      type: "gradient",
-    },
-    title: {
-      text: "Money Tracker",
-    },
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: 200,
-          },
-        },
-      },
-    ],
-  };
+  useEffect(() => {
+    // Update labels based on the selected category for Income
+    setIncomeChartOptions((prevOptions) => ({
+      ...prevOptions,
+      labels: categoryData.Income.map((item) => item.name),
+    }));
+  }, [categoryData.Income]);
 
-  const handleChange = (event) => {
-    const selected = event.target.value;
-    setSelectedCategory(selected);
-  };
+  useEffect(() => {
+    // Update labels based on the selected category for Expense
+    setExpenseChartOptions((prevOptions) => ({
+      ...prevOptions,
+      labels: categoryData.Expense.map((item) => item.name),
+    }));
+  }, [categoryData.Expense]);
 
   return (
-    <div>
-      <div>
-        <label htmlFor="category">Select Category: </label>
-        <select id="category" onChange={handleChange} value={selectedCategory}>
-          {Object.keys(categoryData).map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
+    <div className={graphCSS.chartContainer}>
+      <div className={graphCSS.chart}>
+        <h3 className={graphCSS.income3}>Income Status </h3>
+        {categoryData.Income.length > 0 && (
+          <ReactApexChart
+            options={incomeChartOptions}
+            series={categoryData.Income.map((income) => income.data[0])}
+            type="donut"
+          />
+        )}
       </div>
 
-      <div id={graphCSS.chart}>
-        {show && (
+      <div className={graphCSS.chart}>
+        <h3 className={graphCSS.expense3}>Expense Status </h3>
+        {categoryData.Expense.length > 0 && (
           <ReactApexChart
-            options={options}
-            series={categoryData[selectedCategory]}
+            options={expenseChartOptions}
+            series={categoryData.Expense.map((expense) => expense.data[0])}
             type="donut"
-            width={380}
           />
         )}
       </div>

@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import "./Login.css";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [userId] = useState("");
+  const [invalidCredentials, setInvalidCredentials] = useState(false);
 
   const navigate = useNavigate();
 
@@ -15,7 +16,7 @@ function Login() {
     e.preventDefault();
     try {
       const loginResponse = await axios.post(
-        "https://omnireports.azurewebsites.net/api/Login",
+        "https://pfmservices.azurewebsites.net/api/Login?",
         {
           username: username,
           password: password,
@@ -28,14 +29,13 @@ function Login() {
         );
         const temp1 = loginResponse.data.token;
         const temp3 = { token: temp1, ...temp[0] };
+        console.log("temp3", temp3);
 
-        sessionStorage.setItem(
-          "user",
-          JSON.stringify(temp3)
-        );
+        sessionStorage.setItem("user", JSON.stringify(temp3));
         axios.defaults.headers.common["Authorization"] = `Bearer ${temp1}`;
         navigate("/dashboard");
       } else {
+        setInvalidCredentials(true);
         console.log("Invalid credentials");
       }
     } catch (err) {
@@ -43,10 +43,30 @@ function Login() {
     }
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (invalidCredentials) {
+      const timeoutId = setTimeout(() => {
+        setInvalidCredentials(false);
+      }, 3000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [invalidCredentials]);
 
   return (
     <div className="login-container">
+      <AnimatePresence>
+        {invalidCredentials && (
+          <motion.div
+            className="error-card"
+            initial={{ opacity: 0, y: -50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -50 }}
+          >
+            <p className="error-message" style={{color:"white"}}>Invalid Credentials</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div
         className="login-box"
         initial={{ scale: 0 }}

@@ -4,7 +4,7 @@ import ExpenserecordCSS from "./Expenserecords.module.css";
 import 'jspdf-autotable'
 import jsPDF from 'jspdf';
 
-const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb";
+const apiUrl = "https://pfmservices.azurewebsites.net/api/CRUD_irwb?";
 const session = JSON.parse(sessionStorage.getItem("user"));
 const userIdObj = session && session.Name === "_id" ? session : null;
 const userId = userIdObj ? userIdObj.Value : null;
@@ -41,20 +41,21 @@ const Expenserecords = () => {
     const tableColumn = ['ExpenseType','Account ID', 'Description', 'Amount', 'Date'];
     const tableRows = [];
   
-    filteredRecords.forEach((item) => {
-      item.accountDetails.forEach((detail) => {
-        const dotDate = new Date(detail.dot);
-        const isWithinDateRange =
-          dotDate >= new Date(startDate) && dotDate <= new Date(endDate);
-        const hasMatchingTitle = detail.transactionType === transactionType;
+    {filteredRecords &&
+      filteredRecords.map((item, index) =>
+        item.accountDetails.map((detail, idx) => {
+          const dotDate = new Date(detail.dot);
+          const isWithinDateRange =
+            dotDate >= new Date(startDate) && dotDate <= new Date(endDate);
+          const hasMatchingTitle = detail.transactionType === transactionType;
   
-        if (isWithinDateRange && (transactionType === '' || hasMatchingTitle)) {
+          if (isWithinDateRange && (transactionType === '' || hasMatchingTitle)) {
           const {transactionType, accountId, description, amount, dot } = detail;
           const rowData = [transactionType,accountId, description, amount, new Date(dot).toLocaleDateString()];
           tableRows.push(rowData);
         }
-      });
-    });
+      })
+    )}
   
     doc.autoTable({
       head: [tableColumn],
@@ -123,7 +124,7 @@ const Expenserecords = () => {
             <div className={ExpenserecordCSS.form_group}>
               <label htmlFor="transactionType">Expense Type</label>
               <select value={transactionType}
-              onClick={(e)=>setTransactionType(e.target.value)}
+              onChange={(e)=>setTransactionType(e.target.value)}
               >
               <option value="">Select</option>
               <option value="Food">Food</option>
@@ -196,7 +197,7 @@ const Expenserecords = () => {
       })
     )}
   <tr>
-    <td colSpan="2">Total:</td>
+    <td colSpan="3">Total:</td>
     <td>{expensesum}</td>
   </tr>
               </tbody>

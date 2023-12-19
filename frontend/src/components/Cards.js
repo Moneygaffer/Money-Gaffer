@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import cardsCSS from "./Cards.module.css";
 
-const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
+const apiUrl = "https://pfmservices.azurewebsites.net/api/CRUD_irwb?";
 
 const StyledBox = ({ visible }) => {
   return (

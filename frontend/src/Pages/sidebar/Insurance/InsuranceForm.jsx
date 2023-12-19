@@ -1,152 +1,206 @@
-import React, { useState } from "react";
-import { v4 as uuid } from "uuid";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-//import "./Loan.css"
-const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
+import InsuranceCSS from "./Insurance.module.css";
+
+const apiUrl = "https://pfmservices.azurewebsites.net/api/CRUD_irwb?";
+const session = JSON.parse(sessionStorage.getItem("user"));
+const userIdObj = session && session.Name === "_id" ? session : null;
+const userId = userIdObj ? userIdObj.Value : null;
 
 function InsuranceForm() {
-  const [policyNum, setPolicyNum] = useState("");
   const [insuranceType, setInsuranceType] = useState("");
-  const [insuranceCompany, setInsuranceCompany] = useState("");
-  const [premiumAmt, setPremiumAmt] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [renewalDate, setRenewalDate] = useState("");
-  const [coverageAmt, setCoverageAmt] = useState("");
-  const [desc, setDesc] = useState("");
+  const [templates, setTemplates] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [formValues, setFormValues] = useState({});
+  const [currentSlide, setCurrentSlide] = useState(1);
+  const [formVisible,setFormVisible]=useState(false);
 
-  const session = JSON.parse(sessionStorage.getItem("user"));
-  const userIdObj = session && session.Name === "_id" ? session : null;
-  const userId = userIdObj ? userIdObj.Value : null;
-
-  const handlesubmit = async (e) => {
-    e.preventDefault();
-    const recordId = uuid();
+  const fetchData = async () => {
     try {
       const response = await axios.post(apiUrl, {
-        crudtype: 1,
-        userId: userId,
-        recordid: recordId,
-        collectionname: "insurance",
-        data: {
-          policyNumber: policyNum,
-          insuranceType: insuranceType,
-          insuranceCompany: insuranceCompany,
-          premiumAmount: premiumAmt,
-          startDate: startDate,
-          renewalDate: renewalDate,
-          coverageAmount: coverageAmt,
-          description: desc,
-        },
+        crudtype: 2,
+        recordid: null,
+        collectionname: "insurance_templates",
       });
-      console.log(response);
-      if (response.data.status === "PASS") {
-        console.log("Data saved Successfully");
-      } else {
-        console.log("Failed to save data", response.data.message);
-      }
+      let temp = JSON.parse(
+        response.data.data.replace(/ObjectId\("(\w+)"\)/g, '"$1"')
+      );
+      console.log("Templates:", response);
+      console.log("the data:", temp);
+      setTemplates(temp);
     } catch (error) {
       console.error("API Error:", error);
     }
-    setPolicyNum("");
-    setInsuranceType("");
-    setInsuranceCompany("");
-    setPremiumAmt("");
-    setStartDate("");
-    setRenewalDate("");
-    setCoverageAmt("");
-    setDesc("");
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleGetDetails = () => {
+    const selected = templates.find(
+      (template) => template.insurancetype === insuranceType
+    );
+    setSelectedTemplate(selected || null);
+    setCurrentSlide(1);
+    setFormVisible(true);
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [field]: value,
+    }));
+  };
+
+  const renderFields = () => {
+    const fields = Object.entries(selectedTemplate.fields)
+      .filter(([key]) => !key.startsWith("*"))
+      .slice((currentSlide - 1) * 8, currentSlide * 8);
+
+    return fields.map(([key, _], index) => (
+      <div key={key} className={InsuranceCSS.form_field}>
+        <label htmlFor={key} className={InsuranceCSS.form_label}>
+          {key}
+        </label>
+        <input
+          type="text"
+          id={key}
+          name={key}
+          value={formValues[key] || ""}
+          onChange={(e) => handleInputChange(key, e.target.value)}
+          className={InsuranceCSS.form_input}
+        />
+      </div>
+    ));
+  };
+
+  const isLastSlide =
+    selectedTemplate &&
+    currentSlide ===
+      Math.ceil(
+        Object.entries(selectedTemplate.fields || {}).filter(
+          ([key]) => !key.startsWith("*")
+        ).length / 8
+      );
+
+  const handleNextSlide = (e) => {
+    e.preventDefault();
+    const totalSlides = Math.ceil(
+      Object.entries(selectedTemplate.fields).filter(
+        ([key]) => !key.startsWith("*")
+      ).length / 8
+    );
+
+    console.log("Current Slide:", currentSlide);
+    console.log("Total Slides:", totalSlides);
+
+    if (currentSlide < totalSlides) {
+      setCurrentSlide((prevSlide) => {
+        console.log("Previous Slide:", prevSlide);
+        return prevSlide + 1;
+      });
+    }
+  };
+
+  const handlePrevSlide = (e) => {
+    e.preventDefault();
+    if (currentSlide > 1) {
+      setCurrentSlide((prevSlide) => prevSlide - 1);
+    }
+  };
+  const handleSave=async (e)=>{
+    e.preventDefault();
+    try{
+      const requestData=await axios.post(apiUrl,{
+        crudtype:1,
+        userId:session[0].Value,
+        recordid:null,
+        collectionname:"allinsurances",
+        data: {
+          insuranceType: selectedTemplate.insurancetype, 
+          ...formValues, 
+        },
+      },{
+        Authorization:session.token,
+      });
+      console.log("Saved Data:",requestData)
+      console.log("insurance data:",requestData.data);
+      setFormValues({});
+     
+    }
+    catch(error){
+      console.log("Error", error)
+    }
+
+
+  }
   return (
-    <div className="page-container4">
-      <div className="container4">
-        <div className="form-container4">
-          <h2> Your Insurance Details</h2>
-          <form onSubmit={handlesubmit}>
-            <div className="form-group4">
-              <div className="form-column">
-                <label>Enter Policy Number</label>
-                <input
-                  type="text"
-                  id="policyNum"
-                  placeholder="Enter Policy Number"
-                  value={policyNum}
-                  onChange={(e) => setPolicyNum(e.target.value)}
-                />
-                <label>Enter Insurance Type</label>
-                <input
-                  type="text"
-                  id="insuranceType"
-                  placeholder="Enter Insurance Type"
-                  value={insuranceType}
-                  onChange={(e) => setInsuranceType(e.target.value)}
-                />
-                <label>Enter Insurance Company</label>
-                <input
-                  type="text"
-                  id="insuranceCompany"
-                  placeholder="Enter Isurance Company"
-                  value={insuranceCompany}
-                  onChange={(e) => setInsuranceCompany(e.target.value)}
-                />
-                <label>Enter Premium Amount</label>
-                <input
-                  type="text"
-                  id="premiumAmt"
-                  placeholder="Enter Premium Amount"
-                  value={premiumAmt}
-                  onChange={(e) => setPremiumAmt(e.target.value)}
-                />
-                <div className="form-column">
+    <div className={InsuranceCSS.first_div}>
+      <div
+        className={InsuranceCSS.main_div}
+        style={{ display: "flex", alignItems: "center" }}
+      >
+        <label
+          className={InsuranceCSS.form_label}
+          htmlFor="insuranceType"
+          style={{ marginLeft: "200px", fontSize: "20px" }}
+        >
+          Enter Insurance Type
+        </label>
+        <input
+          style={{ marginTop: "20px", marginLeft: "20px" }}
+          type="text"
+          id="insuranceType"
+          placeholder="Enter Insurance Type"
+          value={insuranceType}
+          onChange={(e) => setInsuranceType(e.target.value)}
+          className={InsuranceCSS.form_input1}
+        />
+        <button
+          onClick={handleGetDetails}
+          style={{ marginLeft: "20px", height: "40px", marginTop: "4px" }}
+        >
+          Click Here
+        </button>
+      </div>
+      {formVisible && (  
+        <form className={InsuranceCSS.ins_form}>
+          {selectedTemplate !== null && (
+            <div>
+              <h2 className={InsuranceCSS.form_heading}>
+                Enter Details for {selectedTemplate.insurancetype}:
+              </h2>
+              <div className={InsuranceCSS.form_fields}>{renderFields()}</div>
+              <div className={InsuranceCSS.pagination}>
+                <button
+                  className={InsuranceCSS.ins_prevbtn}
+                  onClick={handlePrevSlide}
+                >
+                  Previous
+                </button>
+                <span
+                  className={InsuranceCSS.ins_cursld}
+                >{`Slide ${currentSlide}`}</span>
+                <button
+                  className={InsuranceCSS.ins_nextbtn}
+                  onClick={handleNextSlide}
+                >
+                  Next
+                </button>
+                {isLastSlide && (
                   <button
-                    type="submit"
-                    style={{
-                      marginTop: "30px",
-                      marginLeft: "30px",
-                      width: "50%",
-                    }}
+                    className={InsuranceCSS.ins_savebtn}
+                    onClick={handleSave}
                   >
                     Save
                   </button>
-                </div>
-              </div>
-              <div className="form-column">
-                <label>Start Date</label>
-                <input
-                  type="date"
-                  id="startDate"
-                  placeholder="Enter Start Date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-                <label>Renewal Date</label>
-                <input
-                  type="date"
-                  id="renewalDate"
-                  placeholder="Enter Renewal Date"
-                  value={renewalDate}
-                  onChange={(e) => setRenewalDate(e.target.value)}
-                />
-                <label>Coverage Amount</label>
-                <input
-                  type="text"
-                  id="coverageAmt"
-                  placeholder="Enter Coverage Amount"
-                  value={coverageAmt}
-                  onChange={(e) => setCoverageAmt(e.target.value)}
-                />
-                <label>Description</label>
-                <input
-                  type="text"
-                  id="desc"
-                  placeholder="Enter your Description Here"
-                  value={desc}
-                  onChange={(e) => setDesc(e.target.value)}
-                />
+                )}
               </div>
             </div>
-          </form>
-        </div>
-      </div>
+          )}
+        </form>
+      )}
     </div>
   );
 }

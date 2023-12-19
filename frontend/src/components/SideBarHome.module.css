@@ -4,7 +4,7 @@
 }
 .home_main{
     display:flex;
-    flex-direction:row;
+    flex-direction:column;
     flex:1;
 }
 .chat_bot {

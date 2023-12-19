@@ -1,9 +1,18 @@
-/* Graph.css */
-
-#chart{
-    margin-top:50px;
+/* Graph.module.css */
+.chart {
+  
+    width: 380px;
+   /* or any other desired width */
+    margin: 0 auto; /* to center the chart */
+  }
+  .chartContainer {
+    margin-top: 50px;
     display: flex;
-    align-self: center;
-    justify-self: center;
-    margin-left: 10px;
-}
+    justify-content: space-between; /* Adjust the alignment as needed */
+  }
+  .income3{
+    margin-left:40px;
+  }
+  .expense3{
+    margin-left:40px;
+  }

@@ -19,7 +19,7 @@ function Signup() {
     };
     try {
       const response = await axios.post(
-        "https://omnireports.azurewebsites.net/api/register?",
+        "https://pfmservices.azurewebsites.net/api/register?",
         data
       );
       if (response) {

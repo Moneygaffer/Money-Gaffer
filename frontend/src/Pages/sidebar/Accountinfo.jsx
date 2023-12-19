@@ -3,7 +3,7 @@ import axios from "axios";
 import "./AccountInfo.css";
 import { v4 as uuid } from "uuid";
 
-const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
+const apiUrl = "https://pfmservices.azurewebsites.net/api/CRUD_irwb?";
 
 function AccountInfo() {
   const [bankName, setBankName] = useState("");

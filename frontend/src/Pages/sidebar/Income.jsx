@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import IncomeCSS from "./Income.module.css";
 import axios from "axios";
 import { TablePagination } from "@mui/material";
-import 'jspdf-autotable'
-import jsPDF from 'jspdf';
+import "jspdf-autotable";
+import jsPDF from "jspdf";
 import { v4 as uuid } from "uuid";
 import { Link } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 
-const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
 
+const apiUrl = "https://pfmservices.azurewebsites.net/api/CRUD_irwb?";
 
 function FormTable({ addTransaction }) {
   const [incomeTitle, setincomeTitle] = useState("");
@@ -21,19 +21,20 @@ function FormTable({ addTransaction }) {
   const [bankid, setBankId] = useState("");
   const [address, setAddress] = useState("");
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(9);
+  const [rowsPerPage, setRowsPerPage] = useState(7);
   const [editMode, setEditMode] = useState(false);
   const [transactionType, setTransactionType] = useState("");
   const [editRecordId, setEditRecordId] = useState(null);
+  const [incTypeFilter, setIncTypeFilter] = useState("");
+  const [incTitleFilter, setIncTitleFilter] = useState("");
+  const [accountNoFilter, setAccountNoFilter] = useState("");
+  const [bankNameFilter, setBankNameFilter] = useState("");
+  const [amountFilter, setAmountFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
   const session = JSON.parse(sessionStorage.getItem("user"));
 
-  
   const userIdObj = session && session.Name === "_id" ? session : null;
   const userId = userIdObj ? userIdObj.Value : null;
-
-  // const moreinfo = () => {
-  //   setRowPage(rowPage + 2);
-  // };
 
   const parseData = (data) => {
     const modifiedData = data
@@ -50,23 +51,37 @@ function FormTable({ addTransaction }) {
   };
   const generatePDF = () => {
     const doc = new jsPDF();
-    const tableColumn = [ 'Transaction Type','Account ID','Bank Name', 'Description', 'Amount', 'Date'];
+    const tableColumn = [
+      "Transaction Type",
+      "Account ID",
+      "Bank Name",
+      "Description",
+      "Amount",
+      "Date",
+    ];
     const tableRows = [];
 
-flattenedData.forEach((item) => {
-  const { transactionType, accountId,bankName, description, amount, dot } = item;
-  const rowData = [transactionType, accountId, bankName,description, amount, new Date(dot).toLocaleDateString()];
-  tableRows.push(rowData);
-});
-
+    flattenedData.forEach((item) => {
+      const { transactionType, accountId, bankName, description, amount, dot } =
+        item;
+      const rowData = [
+        transactionType,
+        accountId,
+        bankName,
+        description,
+        amount,
+        new Date(dot).toLocaleDateString(),
+      ];
+      tableRows.push(rowData);
+    });
 
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
     });
 
-    doc.save('accountDetails.pdf');
-  }
+    doc.save("accountDetails.pdf");
+  };
 
   const fetchIncomeData = async () => {
     try {
@@ -105,8 +120,9 @@ flattenedData.forEach((item) => {
       }
       return acc;
     }, null);
-
+    setTransactionType(editRecord.transactionType);
     setincomeTitle(editRecord.description);
+    setBankId(editRecord.accountId);
     setBankName(editRecord.bankName);
     setAddress(editRecord.address);
     setAmount(editRecord.amount);
@@ -115,6 +131,8 @@ flattenedData.forEach((item) => {
     setEditRecordId(recordId);
   };
   const handleCancelEdit = () => {
+    setTransactionType("");
+    setBankId("");
     setincomeTitle("");
     setBankName("");
     setAddress("");
@@ -135,11 +153,11 @@ flattenedData.forEach((item) => {
           recordid: editRecordId,
           collectionname: "income",
           data: {
-            transactionType:transactionType,
+            transactionType: transactionType,
             description: incomeTitle,
             accountId: bankid,
             amount: amount,
-            bankName:bankName,
+            bankName: bankName,
             dot: new Date(date).toISOString().split("T")[0],
           },
         });
@@ -212,7 +230,7 @@ flattenedData.forEach((item) => {
           }
         );
         console.log("bank name is :", bankName);
-        console.log("amount is :",amount)
+        console.log("amount is :", amount);
         if (requestData.data.status === "PASS") {
           console.log("Data saved Successfully");
           console.log("cureent data:", data);
@@ -273,6 +291,30 @@ flattenedData.forEach((item) => {
     }
   };
   const flattenedData = data.flatMap((item) => item.accountDetails);
+  const filteredData = flattenedData.filter((detail) => {
+    const incTypeMatch =
+      incTypeFilter === "" || detail.transactionType === incTypeFilter;
+    const incTitleMatch =
+      incTitleFilter === "" || detail.description.includes(incTitleFilter);
+    const accountNoMatch =
+      accountNoFilter === "" || detail.accountId.includes(accountNoFilter);
+    const bankNameMatch =
+      bankNameFilter === "" || detail.bankName.includes(bankNameFilter);
+    const amountMatch =
+      amountFilter === "" || detail.amount.includes(amountFilter);
+    const dateMatch =
+      dateFilter === "" ||
+      new Date(detail.dot).toISOString().split("T")[0] === dateFilter;
+
+    return (
+      incTypeMatch &&
+      incTitleMatch &&
+      accountNoMatch &&
+      bankNameMatch &&
+      amountMatch &&
+      dateMatch
+    );
+  });
 
   return (
     <div className={IncomeCSS.page_container}>
@@ -291,17 +333,17 @@ flattenedData.forEach((item) => {
           </div>
           <div className={IncomeCSS.form_group}>
             <label htmlFor="transactionType">Income Type</label>
-            <select value={transactionType}
-            onChange={(e)=>setTransactionType(e.target.value)}>
-
-           
-           <option value="">Select</option>
-           <option value="Rent">Rent</option>
-           <option value="Salary">Salary</option>
-           <option value="Interest">Interest</option>
-           <option value="Profit">Profit</option>
-           <option value="Others">Others</option>
-           </select>
+            <select
+              value={transactionType}
+              onChange={(e) => setTransactionType(e.target.value)}
+            >
+              <option value="">Select</option>
+              <option value="Rent">Rent</option>
+              <option value="Salary">Salary</option>
+              <option value="Interest">Interest</option>
+              <option value="Profit">Profit</option>
+              <option value="Others">Others</option>
+            </select>
           </div>
           <div className={IncomeCSS.form_group}>
             <label>Select Bank Name</label>
@@ -344,7 +386,6 @@ flattenedData.forEach((item) => {
             />
           </div>
           <div className={IncomeCSS.form_group}>
-           
             <button
               type="submit"
               className={IncomeCSS.btn_IncomeSaveChanges}
@@ -370,9 +411,77 @@ flattenedData.forEach((item) => {
             <Link to="/Incomerecords" className={IncomeCSS.btn_2}>
               Income Records
             </Link>
-            <button onClick={generatePDF}  className={IncomeCSS.pdfbutton}>Export to PDF</button>
-
+            <button onClick={generatePDF} className={IncomeCSS.pdfbutton}>
+              Export to PDF
+            </button>
           </h2>
+          <div className={IncomeCSS.custom_filters}>
+            <div
+              className={`${IncomeCSS.form_group}${IncomeCSS.inline_filter}`}>
+              <select
+                className={IncomeCSS.select_filter}
+                value={incTypeFilter}
+                onChange={(e) => setIncTypeFilter(e.target.value)}
+              >
+                <option value="">All</option>
+                <option value="Rent">Rent</option>
+                <option value="Salary">Salary</option>
+                <option value="Interest">Interest</option>
+                <option value="Profit">Profit</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+            <div
+              className={`${IncomeCSS.form_group} ${IncomeCSS.inline_filter}`}
+            >
+              <input
+                type="text"
+                placeholder="IncTitle"
+                value={incTitleFilter}
+                onChange={(e) => setIncTitleFilter(e.target.value)}
+              />
+            </div>
+            <div
+              className={`${IncomeCSS.form_group} ${IncomeCSS.inline_filter}`}
+            >
+              <input
+                type="text"
+                placeholder="Acc No"
+                value={accountNoFilter}
+                onChange={(e) => setAccountNoFilter(e.target.value)}
+              />
+            </div>
+            <div
+              className={`${IncomeCSS.form_group} ${IncomeCSS.inline_filter}`}
+            >
+              <input
+                type="text"
+                placeholder="Bank Name"
+                value={bankNameFilter}
+                onChange={(e) => setBankNameFilter(e.target.value)}
+              />
+            </div>
+            <div
+              className={`${IncomeCSS.form_group} ${IncomeCSS.inline_filter}`}
+            >
+              <input
+                type="text"
+                placeholder="Amt"
+                value={amountFilter}
+                onChange={(e) => setAmountFilter(e.target.value)}
+              />
+            </div>
+            <div
+              className={`${IncomeCSS.form_group} ${IncomeCSS.inline_filter}`}
+            >
+              <input
+                type="date"
+                placeholder="Date"
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value)}
+              />
+            </div>
+          </div>
           <table>
             <thead>
               <tr>
@@ -386,53 +495,53 @@ flattenedData.forEach((item) => {
               </tr>
             </thead>
             <tbody>
-            {flattenedData
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((detail, idx) => (
-                <tr key={idx} className="pagination-data">
-                  <td className={IncomeCSS.td_1}>{detail.transactionType}</td>
-                  <td className={IncomeCSS.td_1}>{detail.description}</td>
-                  <td className={IncomeCSS.td_1}>{detail.accountId}</td>
-                  <td className={IncomeCSS.td_1}>{detail.bankName}</td>
-                  <td className={IncomeCSS.td_1}>{detail.amount}</td>
-                  <td className={IncomeCSS.td_1}>
-              {new Date(detail.dot).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-              })}
-            </td>
-            
-                  <td className={IncomeCSS.td_1}>
-                    <EditIcon
-                      onClick={() => handleEdit(detail.recordId)}
-                      className={IncomeCSS.editIcon}
-                    />
-                    <DeleteIcon
-                      onClick={() => handleDelete(detail.recordId)}
-                      className={IncomeCSS.deleteIcon}
-                    />
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-        <TablePagination
-          component="div"
-          count={flattenedData.length}
-          page={page}
-          onPageChange={(event, newPage) => setPage(newPage)}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={(event) => {
-            setRowsPerPage(parseInt(event.target.value, 10));
-            setPage(0);
-          }}
-          rowsPerPageOptions={[4, 6,8,9]}
-        />
+            {filteredData
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((detail, idx) => (
+                  <tr key={idx} className="pagination-data">
+                    <td className={IncomeCSS.td_1}>{detail.transactionType}</td>
+                    <td className={IncomeCSS.td_1}>{detail.description}</td>
+                    <td className={IncomeCSS.td_1}>{detail.accountId}</td>
+                    <td className={IncomeCSS.td_1}>{detail.bankName}</td>
+                    <td className={IncomeCSS.td_1}>{detail.amount}</td>
+                    <td className={IncomeCSS.td_1}>
+                      {new Date(detail.dot).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })}
+                    </td>
+
+                    <td className={IncomeCSS.td_1}>
+                      <EditIcon
+                        onClick={() => handleEdit(detail.recordId)}
+                        className={IncomeCSS.editIcon}
+                      />
+                      <DeleteIcon
+                        onClick={() => handleDelete(detail.recordId)}
+                        className={IncomeCSS.deleteIcon}
+                      />
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+          <TablePagination
+            component="div"
+            count={flattenedData.length}
+            page={page}
+            onPageChange={(event, newPage) => setPage(newPage)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={(event) => {
+              setRowsPerPage(parseInt(event.target.value, 10));
+              setPage(0);
+            }}
+            rowsPerPageOptions={[4, 6, 7,8, 9]}
+          />
+        </div>
       </div>
     </div>
-  </div>
-);
-        }
+  );
+}
 
 export default FormTable;

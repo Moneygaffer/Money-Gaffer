@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
 import axios from "axios";
 import "./Loan.css";
-const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
+const apiUrl = "https://pfmservices.azurewebsites.net/api/CRUD_irwb?";
 
 function Loan() {
   const [loanType, setLoanType] = useState("");

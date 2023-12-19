@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import InvestmentCSS from "./Investments.module.css";
 import { v4 as uuid } from "uuid";
 import axios from "axios";
-const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
+const apiUrl = "https://pfmservices.azurewebsites.net/api/CRUD_irwb?";
 
 function Investments() {
   const [invType, setInvType] = useState("");

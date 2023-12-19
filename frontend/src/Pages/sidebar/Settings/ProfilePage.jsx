@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ProfilePageCSS from "./ProfilePage.module.css";
 import axios from "axios";
-const apiUrl = "https://omnireports.azurewebsites.net/api/CRUD_irwb?";
+const apiUrl = "https://pfmservices.azurewebsites.net/api/CRUD_irwb?";
 
 function ProfilePage() {
   const session = JSON.parse(sessionStorage.getItem("user"));
@@ -14,9 +14,7 @@ function ProfilePage() {
     session && session[2] && session[2].Value ? session[2].Value : null;
   const role =
     session && session[3] && session[3].Value ? session[3].Value : null;
- // const token = session && session.token ? session.token : null;
-  // console.log(username);
-  // console.log(email);
+ 
   // console.log(role);
  const [newPassword,setNewPassword]=useState("");
  const [confirmNewPassword,setConfirmNewPassword]=useState("");
@@ -47,6 +45,7 @@ function ProfilePage() {
     console.log("name:",username)
     console.log("email",email)
     console.log("API Response:",response)
+    console.log("Data:",response.data)
     console.log("New Password:",newPassword)
     if(response.data.status=="PASS"){
       console.log("Password updated successfully")

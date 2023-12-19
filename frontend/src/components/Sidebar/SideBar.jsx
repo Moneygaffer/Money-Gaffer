@@ -22,7 +22,7 @@ const routes = [
   },
   {
     path: "/AccountInfo",
-    name: "Create Account",
+    name: "Bank Account",
     icon: <AccountCircleIcon fontSize="small" />,
   },
   {

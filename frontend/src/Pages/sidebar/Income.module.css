@@ -228,15 +228,15 @@ th {
   margin-top: 10px;
 }
 .btn_IncomeCancel{
-  height: 50%;
-  margin-left: 120px;
+  height: 55%;
+  margin-left: 50px;    
 
 }
-.btn_IncomeSaveChanges{
+/* .btn_IncomeSaveChanges{
   width: 40%;
   height:fit-content;
   text-align: center;
-}
+} */
 .pagination{
   display:flex;
   flex-direction: row;
@@ -253,4 +253,14 @@ th {
 .pdfbutton:hover{
   transform:scale(1.1);
   
+}
+.inline_filter {
+  display: inline-block;
+  margin-right: 19px;
+  width: 13%;
+  
+}
+
+.select_filter{
+  width: 110px;
 }
