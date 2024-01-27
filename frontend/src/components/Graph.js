@@ -103,7 +103,6 @@ const Graph = () => {
       }
 
       setData(temp);
-      console.log("Fetch completed successfully!");
     } catch (error) {
       console.error("API Error:", error);
     }
@@ -125,7 +124,6 @@ const Graph = () => {
       );
 
       const temp = parseData(data.data);
-      console.log("hi...:", temp);
 
       if (temp && temp[0].accountDetails && temp[0].accountDetails.length > 0) {
         const expenseDetails = temp[0].accountDetails.map((detail) => ({
@@ -157,7 +155,6 @@ const Graph = () => {
         });
 
         setData(temp);
-        console.log("Fetch completed successfully for Expense!");
       }
     } catch (error) {
       console.error("API Error:", error);
@@ -202,7 +199,7 @@ const Graph = () => {
         )}
       </div>
 
-      <div className={graphCSS.chart}>
+      <div className={graphCSS.chart2}>
         <h3 className={graphCSS.expense3}>Expense Status </h3>
         {categoryData.Expense.length > 0 && (
           <ReactApexChart

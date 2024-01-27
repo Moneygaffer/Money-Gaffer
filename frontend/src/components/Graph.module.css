@@ -1,18 +1,19 @@
-/* Graph.module.css */
-.chart {
-  
-    width: 380px;
-   /* or any other desired width */
-    margin: 0 auto; /* to center the chart */
-  }
-  .chartContainer {
-    margin-top: 50px;
-    display: flex;
-    justify-content: space-between; /* Adjust the alignment as needed */
-  }
-  .income3{
-    margin-left:40px;
-  }
-  .expense3{
-    margin-left:40px;
-  }
+.income3{
+  margin-left:40px;
+}
+.expense3{
+  margin-left:40px;
+}
+.chart{
+  height:400px;
+  width:400px;
+}
+.chart2{
+  height:440px;
+  width:440px;
+}
+.chartContainer{
+display:flex;
+flex-direction: row;
+justify-content: space-between;
+}

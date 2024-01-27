@@ -19,18 +19,19 @@ function Signup() {
     };
     try {
       const response = await axios.post(
-        "https://pfmservices.azurewebsites.net/api/register?",
+        "http://localhost:3001/api/register", // Update with your server URL
         data
       );
-      if (response) {
-        console.log(response);
-        navigate("/login");
+      if (response.data.status === "PASS") {
+        console.log(response.data.message);
+        navigate("/Login");
+      } else {
+        console.error(response.data.message);
       }
     } catch (error) {
       console.error("Signup Error:", error);
     }
   };
-
   return (
     <div className="signup-container">
       <motion.div
